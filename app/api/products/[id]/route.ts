@@ -51,7 +51,7 @@ export async function PUT(
     // Await params
     const { id } = await params;
     const body = await request.json();
-    const { name, description, price, categoryId, image, inventory } = body;
+    const { name, description, price, categoryId, image } = body;
 
     // Validate required fields
     if (!name || !description || !price || !categoryId) {
