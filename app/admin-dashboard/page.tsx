@@ -62,23 +62,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Product Images Handling
-  const handleProductImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setProductImageFiles(files);
-    
-    const previews: string[] = [];
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        previews.push(reader.result as string);
-        if (previews.length === files.length) {
-          setProductImagePreviews(previews);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
+
 
   // Upload Image to Cloudinary
   const uploadImage = async (file: File): Promise<string | null> => {

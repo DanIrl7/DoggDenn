@@ -44,7 +44,7 @@ const TestimonialsSection = () => {
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">What Our Customers Say</h2>
         <p className="text-center text-gray-600 text-lg mb-12 max-w-2xl mx-auto">
-          Thousands of happy pet owners trust Doggdenn for their furry friends' needs.
+          Thousands of happy pet owners trust Doggdenn for their furry friends&apos; needs.
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -62,7 +62,7 @@ const TestimonialsSection = () => {
               
               {/* Review Content */}
               <p className="text-gray-700 mb-6 leading-relaxed italic">
-                "{testimonial.content}"
+                &quot;{testimonial.content}&quot;
               </p>
               
               {/* Author Info */}
