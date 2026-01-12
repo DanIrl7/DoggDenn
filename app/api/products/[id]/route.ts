@@ -68,12 +68,8 @@ export async function PUT(
         name,
         description,
         price: parseFloat(price),
-        inventory: inventory !== undefined ? parseInt(inventory) : undefined,
-        category: {
-          connect: { id: categoryId }
-        },
-        images: image ? [image] : [],
-        updatedAt: new Date(),
+        image: image,
+        categoryId: categoryId,
       },
     });
 
