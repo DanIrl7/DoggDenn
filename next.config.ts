@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
     ],
     qualities: [25, 50, 75, 100],
   },
+  experimental: {
+    allowedDevOrigins: ['192.168.205.159'],
+  },
 };
 
 export default nextConfig;
