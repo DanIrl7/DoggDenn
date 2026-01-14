@@ -29,7 +29,6 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map(product => {
-        const price = typeof product.price === 'number' ? product.price : parseFloat(product.price.toString());
         const imageUrl = product.image ? product.image : (product.images && product.images.length > 0 ? product.images[0] : '');
         const finalImageUrl = imageUrl && imageUrl.trim() ? imageUrl : '/placeholder.jpg';
         
@@ -56,7 +55,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
             <div className="p-4">
               <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
               <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
-              <p className="text-2xl font-bold text-blue-600">${price.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-blue-600">${product.price.toFixed(2)}</p>
             </div>
           </button>
         );
