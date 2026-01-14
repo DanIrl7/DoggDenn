@@ -5,11 +5,11 @@ import Image from 'next/image';
 interface Product {
   id: string;
   name: string;
-  description: string;
-  price: number | { toFixed: (digits: number) => string };
+  description?: string;
+  price: number;
   image?: string;
   images?: string[];
-  categoryId: string;
+  categoryId?: string;
 }
 
 interface ProductGridProps {

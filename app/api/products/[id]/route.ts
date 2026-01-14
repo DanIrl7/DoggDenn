@@ -24,7 +24,13 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(product);
+    // Convert Decimal price to number
+    const productWithNumber = {
+      ...product,
+      price: parseFloat(product.price.toString()),
+    };
+
+    return NextResponse.json(productWithNumber);
   } catch (error) {
     console.error('Get product error:', error);
     return NextResponse.json(
@@ -73,7 +79,13 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(product);
+    // Convert Decimal price to number
+    const productWithNumber = {
+      ...product,
+      price: parseFloat(product.price.toString()),
+    };
+
+    return NextResponse.json(productWithNumber);
   } catch (error) {
     console.error('Update product error:', error);
     return NextResponse.json(

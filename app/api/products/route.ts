@@ -17,7 +17,13 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(products);
+    // Convert Decimal prices to numbers
+    const productsWithNumbers = products.map(product => ({
+      ...product,
+      price: parseFloat(product.price.toString()),
+    }));
+
+    return NextResponse.json(productsWithNumbers);
   } catch (error) {
     console.error('Fetch products error:', error);
     return NextResponse.json(
