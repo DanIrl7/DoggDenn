@@ -10,7 +10,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ADDED: Enum for user roles
@@ -56,6 +55,7 @@ model Product {
   description String?
   price       Decimal    @db.Decimal(10, 2)
   image       String?
+  inventory    Int
   categoryId  String?
   category    Category?   @relation(fields: [categoryId], references: [id])
   createdAt   DateTime    @default(now())
