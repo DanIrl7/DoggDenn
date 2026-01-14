@@ -1,16 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number | { toFixed: (digits: number) => string };
-  image?: string;
-  images?: string[];
-  categoryId: string;
-}
+import { Product } from '../types';
 
 interface ProductModalProps {
   product: Product;
@@ -27,7 +18,6 @@ const ProductModal = ({
   onAddToCart,
   onClose,
 }: ProductModalProps) => {
-  const price = typeof product.price === 'number' ? product.price : parseFloat(product.price.toString());
   const imageUrl = product.image ? product.image : (product.images && product.images.length > 0 ? product.images[0] : '');
   const finalImageUrl = imageUrl && imageUrl.trim() ? imageUrl : '/placeholder.jpg';
 
@@ -69,7 +59,7 @@ const ProductModal = ({
           <div className="flex flex-col justify-between">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h2>
-              <p className="text-4xl font-bold text-blue-600 mb-4">${price.toFixed(2)}</p>
+              <p className="text-4xl font-bold text-blue-600 mb-4">${product.price.toFixed(2)}</p>
               <p className="text-gray-700 text-lg leading-relaxed mb-6">{product.description}</p>
             </div>
 

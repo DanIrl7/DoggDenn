@@ -1,16 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  image?: string;
-  images?: string[];
-  categoryId?: string;
-}
+import { Product } from '../types';
 
 interface ProductGridProps {
   products: Product[];

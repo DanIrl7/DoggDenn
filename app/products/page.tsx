@@ -6,22 +6,7 @@ import { fetcher } from '@/lib/fetcher';
 import CategorySidebar from '../components/CategorySidebar';
 import ProductGrid from '../components/ProductGrid';
 import ProductModal from '../components/ProductModal';
-
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  image?: string;
-  categoryId?: string;
-}
+import { Product, Category } from '../types';
 
 export default function ProductsPage() {
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
