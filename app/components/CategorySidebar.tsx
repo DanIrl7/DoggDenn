@@ -1,13 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-}
+import { Category } from '../types';
 
 interface CategorySidebarProps {
   categories: Category[];
