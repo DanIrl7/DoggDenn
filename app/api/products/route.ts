@@ -39,12 +39,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, description, price, categoryId, image } = body;
+    const { name, description, price, categoryId, image, inventory } = body;
 
     // Validate required fields
-    if (!name || !description || !price || !categoryId) {
+    if (!name || !description || !price || !categoryId || inventory === undefined) {
       return NextResponse.json(
-        { error: 'Name, description, price, and categoryId are required' },
+        { error: 'Name, description, price, categoryId, and inventory are required' },
         { status: 400 }
       );
     }
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
         description,
         price: parseFloat(price),
         image: image,
+        inventory: parseInt(inventory),
         categoryId: categoryId,
       },
     });
