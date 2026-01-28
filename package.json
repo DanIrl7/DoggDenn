@@ -13,6 +13,8 @@
     "@clerk/nextjs": "^6.36.5",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "@stripe/react-stripe-js": "^5.5.0",
+    "@stripe/stripe-js": "^8.6.4",
     "cloudinary": "^2.8.0",
     "embla-carousel-react": "^8.6.0",
     "next": "15.2.8",

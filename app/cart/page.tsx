@@ -1,8 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/js';
 import { useCartStore } from '@/app/store/cartStore';
 import CartItemComponent from '@/app/components/CartItemComponent';
+import CheckoutForm from '@/app/components/CheckoutForm';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function CartPage() {
   const { items, clearCart, getTotal } = useCartStore();
@@ -39,7 +44,7 @@ export default function CartPage() {
           </div>
         </div>
 
-        {/* Cart Summary */}
+        {/* Cart Summary & Checkout */}
         <div className="bg-white rounded-lg shadow-md p-6 h-fit">
           <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
 
@@ -53,32 +58,34 @@ export default function CartPage() {
               <span>Free</span>
             </div>
             <div className="flex justify-between text-gray-600">
-              <span>Tax:</span>
+              <span>Tax (10%):</span>
               <span>${(total * 0.1).toFixed(2)}</span>
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b">
             <span className="text-xl font-bold">Total:</span>
             <span className="text-2xl font-bold text-[#7d3d23]">
               ${(total * 1.1).toFixed(2)}
             </span>
           </div>
 
-          <button className="w-full bg-[#7d3d23] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity mb-3">
-            Proceed to Checkout
-          </button>
+          <div className="mb-4">
+            <Elements stripe={stripePromise}>
+              <CheckoutForm total={total} items={items} />
+            </Elements>
+          </div>
 
           <button
             onClick={() => clearCart()}
-            className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors mb-3"
+            className="w-full border border-gray-300 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors mb-3"
           >
             Clear Cart
           </button>
 
           <Link
             href="/products"
-            className="block text-center text-[#7d3d23] font-semibold hover:opacity-80 transition-opacity"
+            className="block text-center text-[#7d3d23] font-semibold hover:opacity-80 transition-opacity text-sm"
           >
             Continue Shopping
           </Link>
