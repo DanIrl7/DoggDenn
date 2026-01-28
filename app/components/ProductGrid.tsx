@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { Product } from '../types';
+import { useCartStore } from '@/app/store/cartStore';
 
 interface ProductGridProps {
   products: Product[];
@@ -9,6 +10,8 @@ interface ProductGridProps {
 }
 
 const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
+  const addItem = useCartStore((state) => state.addItem);
+
   if (products.length === 0) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -46,7 +49,16 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
             <div className="p-4">
               <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
               <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
-              <p className="text-2xl font-bold text-blue-600">${product.price.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-blue-600 mb-3">${product.price.toFixed(2)}</p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addItem(product, 1);
+                }}
+                className="w-full bg-[#7d3d23] text-white py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              >
+                Add to Cart
+              </button>
             </div>
           </button>
         );

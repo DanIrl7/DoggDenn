@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import useSWR from 'swr'
 import Image from 'next/image'
 
@@ -48,6 +48,23 @@ export default function AdminDashboard() {
   const [productImageFiles, setProductImageFiles] = useState<File[]>([]);
   const [productImagePreviews, setProductImagePreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  
+  // Refs for scrolling to forms
+  const categoryFormRef = useRef<HTMLDivElement>(null);
+  const productFormRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll to form when editing
+  useEffect(() => {
+    if (activeTab === 'categories' && editingCategoryId) {
+      categoryFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [editingCategoryId, activeTab]);
+  
+  useEffect(() => {
+    if (activeTab === 'products' && editingProductId) {
+      productFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [editingProductId, activeTab]);
 
   // Category Image Handling
   const handleCategoryImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -255,7 +272,7 @@ export default function AdminDashboard() {
       {activeTab === 'categories' && (
         <div>
           {/* Category Form */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div ref={categoryFormRef} className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 className="text-2xl font-semibold mb-4">
               {editingCategoryId ? 'Edit Category' : 'Add New Category'}
             </h2>
@@ -363,13 +380,13 @@ export default function AdminDashboard() {
       {activeTab === 'products' && (
         <div>
           {/* Product Form */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div ref={productFormRef} className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 className="text-2xl font-semibold mb-4">
               {editingProductId ? 'Edit Product' : 'Add New Product'}
             </h2>
             <form onSubmit={handleProductSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
+                <label className="block text-sm font-medium mb-2">What is your Name</label>
                 <input
                   type="text"
                   value={productForm.name}
@@ -466,7 +483,7 @@ export default function AdminDashboard() {
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="bg-(--primary) text-white px-6 py-2 rounded-full hover:opacity-90 transition-opacity duration-200 disabled:opacity-50"
+                  className="bg-red-300 text-black px-6 py-2 rounded-full hover:opacity-90 transition-opacity duration-200 disabled:opacity-50"
                 >
                   {uploading ? 'Uploading...' : editingProductId ? 'Update Product' : 'Add Product'}
                 </button>
@@ -474,7 +491,7 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={resetProductForm}
-                    className="bg-gray-500 text-white px-6 py-2 rounded-full hover:bg-gray-600 transition-colors duration-200"
+                    className="bg-primary text-black px-6 py-2 rounded-full hover:bg-gray-600 transition-colors duration-200"
                   >
                     Cancel
                   </button>
