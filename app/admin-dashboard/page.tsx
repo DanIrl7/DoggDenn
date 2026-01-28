@@ -17,8 +17,8 @@ interface Product {
   description: string;
   price: number;
   inventory: number;
-  images: string[];
-  categoryId: string;
+  image: string | null;
+  categoryId: string | null;
   category: Category;
 }
 
@@ -42,7 +42,7 @@ export default function AdminDashboard() {
     price: '',
     inventory: '',
     categoryId: '',
-    images: [] as string[]
+    image: ''
   });
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [productImageFiles, setProductImageFiles] = useState<File[]>([]);
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let imageUrl = productForm.images[0] || '';
+    let imageUrl = productForm.image || '';
     
     if (productImageFiles.length > 0) {
       const uploadedUrl = await uploadImage(productImageFiles[0]);
@@ -196,10 +196,10 @@ export default function AdminDashboard() {
       description: product.description,
       price: product.price.toString(),
       inventory: product.inventory.toString(),
-      categoryId: product.categoryId,
-      images: product.images
+      categoryId: product.categoryId || '',
+      image: product.image || ''
     });
-    setProductImagePreviews(product.images);
+    setProductImagePreviews(product.image ? [product.image] : []);
     setEditingProductId(product.id);
   };
 
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
       price: '',
       inventory: '',
       categoryId: '',
-      images: []
+      image: ''
     });
     setEditingProductId(null);
     setProductImageFiles([]);
@@ -489,7 +489,7 @@ export default function AdminDashboard() {
               <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="relative h-48 w-full">
                   <Image
-                    src={product.images[0] || '/placeholder.jpg'}
+                    src={product.image || '/placeholder.jpg'}
                     alt={product.name}
                     fill
                     className="object-cover"
