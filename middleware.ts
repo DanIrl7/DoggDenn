@@ -10,6 +10,8 @@ const isPublicRoute = createRouteMatcher([
   '/contact(.*)',
   '/api/categories(.*)',
   '/api/products(.*)',
+  '/api/webhooks/clerk(.*)',
+  '/api/webhooks/stripe(.*)',
 ]);
 
 const isAdminRoute = createRouteMatcher([
@@ -25,6 +27,7 @@ export default clerkMiddleware(async (auth, req) => {
   console.log('=== MIDDLEWARE DEBUG ===');
   console.log('Path:', req.nextUrl.pathname);
   console.log('User ID:', userId);
+  console.log('=== END DEBUG ===');
 
   if (!isPublicRoute(req)) {
     await auth.protect();

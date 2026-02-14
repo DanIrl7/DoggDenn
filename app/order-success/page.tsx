@@ -2,15 +2,85 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation'
+import { useCartStore } from '@/app/store/cartStore';
+
+
 
 export default function OrderSuccess() {
-  const [orderNumber] = useState(() => {
-    if (typeof window !== 'undefined') {
-      // Generate a random order number for demo purposes
-      return `ORD-${Date.now()}`;
+
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session_id')
+  const [order, setOrder] = useState<OrderWithItems | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { clearCart } = useCartStore();
+
+  interface OrderWithItems {
+  id: string;
+  createdAt: string;
+  total: string;
+  items: Array<{
+    id: string;
+    quantity: number;
+    price: string;
+    product: {
+      name: string;
+    };
+  }>;
+}
+
+
+  useEffect(() => {
+    if(!sessionId) return;
+
+    const fetchOrder = async () => {
+      try {
+        const res = await fetch(`/api/orders/${sessionId}`);
+        const data = await res.json();
+        setOrder(data);
+
+        clearCart();
+      }
+      catch (err) {
+        console.error('error loading orders', err)
+      }
+      finally {
+        setLoading(false)
+      }
     }
-    return '';
-  });
+
+    fetchOrder()
+
+  }, [sessionId, clearCart]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <p className="text-gray-600">Loading your order details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <main className="min-h-screen p-6 max-w-2xl mx-auto flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Order</h1>
+          <p className="text-gray-600 mb-6">{error || 'Order not found'}</p>
+          <Link
+            href="/products"
+            className="inline-block bg-[#7d3d23] text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+          >
+            Back to Shopping
+          </Link>
+        </div>
+      </main>
+    );
+  }
+  
 
   return (
     <main className="min-h-screen p-6 max-w-2xl mx-auto flex items-center justify-center">
@@ -29,10 +99,35 @@ export default function OrderSuccess() {
           <p className="text-gray-700 mb-2">
             <span className="font-semibold">Order Number:</span>
           </p>
-          <p className="text-2xl font-bold text-[#7d3d23] mb-4">{orderNumber}</p>
+          <p className="text-2xl font-bold text-[#7d3d23] mb-4">{order?.id?.slice(0, 8)}...</p>
+          <p className="text-gray-600 text-sm mb-4">
+            Ordered on {new Date(order?.createdAt).toLocaleDateString()}
+          </p>
           <p className="text-gray-600 text-sm">
             A confirmation email has been sent to your email address.
           </p>
+        </div>
+
+        {/* Order Items */}
+        <div className="bg-gray-50 rounded-lg p-6 mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Items</h2>
+          <div className="space-y-3">
+            {order?.items?.map((item) => (
+              <div key={item.id} className="flex justify-between items-center py-2 border-b last:border-b-0">
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">{item.product?.name}</p>
+                  <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                </div>
+                <p className="font-semibold text-gray-900">${(parseFloat(item.price) * item.quantity).toFixed(2)}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t">
+            <div className="flex justify-between items-center">
+              <p className="text-lg font-bold text-gray-900">Total:</p>
+              <p className="text-2xl font-bold text-[#7d3d23]">${order?.total}</p>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-3 mb-8">

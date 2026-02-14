@@ -55,7 +55,6 @@ model Product {
   description String?
   price       Decimal    @db.Decimal(10, 2)
   image       String?
-  inventory    Int
   categoryId  String?
   category    Category?   @relation(fields: [categoryId], references: [id])
   createdAt   DateTime    @default(now())
@@ -65,13 +64,22 @@ model Product {
 
 // ADDED: Order model
 model Order {
-  id        String      @id @default(cuid())
-  user      User        @relation(fields: [userId], references: [id])
-  userId    String
-  items     OrderItem[]
-  total     Decimal     @db.Decimal(10, 2)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id                 String      @id @default(cuid())
+  user               User        @relation(fields: [userId], references: [id])
+  userId             String
+  items              OrderItem[]
+  total              Decimal     @db.Decimal(10, 2)
+  stripeSessionId    String?     @unique
+  status             OrderStatus @default(PENDING)
+  shippingName       String?
+  shippingEmail      String?
+  shippingAddress    String?
+  shippingCity       String?
+  shippingState      String?
+  shippingPostalCode String?
+  shippingCountry    String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 }
 
 // ADDED: OrderItem model
@@ -81,6 +89,18 @@ model OrderItem {
   orderId   String
   product   Product @relation(fields: [productId], references: [id])
   productId String
+  name      String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
+}
+
+// TEMPORARY CART
+model TempCart {
+  id        String   @id @default(cuid())
+  userId    String
+  items     String   // JSON string of cart items
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
 }

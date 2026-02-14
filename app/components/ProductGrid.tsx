@@ -13,6 +13,7 @@ interface ProductGridProps {
 const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
 
   if (products.length === 0) {
     return (
@@ -23,7 +24,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       {products.map(product => {
         const imageUrl = product.image ? product.image : (product.images && product.images.length > 0 ? product.images[0] : '');
         const finalImageUrl = imageUrl && imageUrl.trim() ? imageUrl : '/placeholder.jpg';
@@ -34,7 +35,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
             className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 text-left cursor-pointer"
             onClick={() => onProductClick(product)}
           >
-            <div className="relative h-64 w-full bg-gray-100">
+            <div className="relative h-48 sm:h-56 lg:h-64 w-full bg-gray-100">
               <Image
                 src={finalImageUrl}
                 alt={product.name}
@@ -48,14 +49,14 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
                 }}
               />
             </div>
-            <div className="p-4">
-              <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
-              <p className="text-2xl font-bold text-blue-600 mb-3">${product.price.toFixed(2)}</p>
+            <div className="p-3 sm:p-4">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-2 line-clamp-2">{product.name}</h3>
+              <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2">{product.description}</p>
+              <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-2 sm:mb-3">${product.price.toFixed(2)}</p>
               
               {/* Quantity Selector */}
-              <div className="flex items-center gap-2 mb-3">
-                <label className="text-sm font-medium text-gray-700">Qty:</label>
+              <div className="flex items-center gap-2 mb-2 sm:mb-3 flex-wrap">
+                <label className="text-xs sm:text-sm font-medium text-gray-700">Qty:</label>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -64,7 +65,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
                       setQuantities({ ...quantities, [product.id]: current - 1 });
                     }
                   }}
-                  className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100"
+                  className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 text-sm"
                 >
                   −
                 </button>
@@ -77,7 +78,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
                     const val = parseInt(e.target.value, 10) || 1;
                     setQuantities({ ...quantities, [product.id]: Math.max(1, val) });
                   }}
-                  className="w-12 border border-gray-300 rounded px-2 py-1 text-center"
+                  className="w-10 sm:w-12 border border-gray-300 rounded px-2 py-1 text-center text-sm"
                 />
                 <button
                   onClick={(e) => {
@@ -85,7 +86,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
                     const current = quantities[product.id] || 1;
                     setQuantities({ ...quantities, [product.id]: current + 1 });
                   }}
-                  className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100"
+                  className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 text-sm"
                 >
                   +
                 </button>
@@ -94,13 +95,28 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  setLoadingProductId(product.id);
                   const quantity = quantities[product.id] || 1;
                   addItem(product, quantity);
                   setQuantities({ ...quantities, [product.id]: 1 });
+                  // Simulate loading state
+                  setTimeout(() => setLoadingProductId(null), 800);
                 }}
-                className="w-full bg-[#7d3d23] text-white py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                disabled={loadingProductId === product.id}
+                className={`w-full text-white py-2 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${
+                  loadingProductId === product.id
+                    ? 'bg-green-600 opacity-80 cursor-not-allowed'
+                    : 'bg-[#7d3d23] hover:opacity-90'
+                }`}
               >
-                Add to Cart
+                {loadingProductId === product.id ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Adding...
+                  </>
+                ) : (
+                  'Add to Cart'
+                )}
               </button>
             </div>
           </div>
