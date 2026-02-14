@@ -66,7 +66,7 @@ const CategoriesSection = () => {
   }
 
   return (
-    <section className="w-full px-4 md:px-12 py-8">
+    <section className="w-full px-4 md:px-12 py-8 bg-[#FAF8F3]">
       <style>{`
         @keyframes zoomLoop {
           0%, 100% { transform: scale(1); }

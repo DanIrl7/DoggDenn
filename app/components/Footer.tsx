@@ -1,32 +1,31 @@
 import Link from 'next/link';
-import Image from 'next/image';
 
 const Footer = () => {
   return (
-    <footer className="bg-(--primary) text-white py-8 px-4">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-[#7d3d23] text-white py-8 sm:py-12 px-4 sm:px-6 md:px-8">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
 
         {/* Quick Links */}
         <div>
-          <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-          <ul className="space-y-2">
+          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Quick Links</h3>
+          <ul className="space-y-1 sm:space-y-2">
             <li>
-              <Link href="/shop" className="hover:underline text-sm">
+              <Link href="/products" className="hover:text-orange-200 transition-colors text-sm sm:text-base">
                 Shop
               </Link>
             </li>
             <li>
-              <Link href="/about" className="hover:underline text-sm">
+              <Link href="/about" className="hover:text-orange-200 transition-colors text-sm sm:text-base">
                 About Us
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="hover:underline text-sm">
+              <Link href="/contact" className="hover:text-orange-200 transition-colors text-sm sm:text-base">
                 Contact
               </Link>
             </li>
             <li>
-              <Link href="/faq" className="hover:underline text-sm">
+              <Link href="/products" className="hover:text-orange-200 transition-colors text-sm sm:text-base">
                 FAQ
               </Link>
             </li>
@@ -35,20 +34,20 @@ const Footer = () => {
 
         {/* Customer Service */}
         <div>
-          <h3 className="text-xl font-bold mb-4">Customer Service</h3>
-          <ul className="space-y-2">
+          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Customer Service</h3>
+          <ul className="space-y-1 sm:space-y-2">
             <li>
-              <Link href="/shipping" className="hover:underline text-sm">
+              <Link href="/products" className="hover:text-orange-200 transition-colors text-sm sm:text-base">
                 Shipping & Returns
               </Link>
             </li>
             <li>
-              <Link href="/privacy" className="hover:underline text-sm">
+              <Link href="/products" className="hover:text-orange-200 transition-colors text-sm sm:text-base">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="/terms" className="hover:underline text-sm">
+              <Link href="/products" className="hover:text-orange-200 transition-colors text-sm sm:text-base">
                 Terms of Service
               </Link>
             </li>
@@ -57,30 +56,27 @@ const Footer = () => {
 
         {/* Contact Info */}
         <div>
-          <h3 className="text-xl font-bold mb-4">Contact Info</h3>
-          <p className="text-sm">
-            Email: info@doggdenn.com
+          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Contact Info</h3>
+          <p className="text-xs sm:text-sm mb-2">
+            Email: <a href="mailto:info@doggdenn.com" className="hover:text-orange-200 transition-colors">info@doggdenn.com</a>
           </p>
-          <p className="text-sm">
-            Phone: (123) 456-7890
+          <p className="text-xs sm:text-sm mb-4">
+            Phone: <a href="tel:+1234567890" className="hover:text-orange-200 transition-colors">(123) 456-7890</a>
           </p>
-          <div className="flex space-x-4 mt-4">
-            {/* Social Media Icons (placeholders) */}
-            <a href="#" aria-label="Facebook" className="hover:opacity-75">
-              <Image src="/file.svg" alt="Facebook" width={24} height={24} />
-            </a>
-            <a href="#" aria-label="Twitter" className="hover:opacity-75">
-              <Image src="/file.svg" alt="Twitter" width={24} height={24} />
-            </a>
-            <a href="#" aria-label="Instagram" className="hover:opacity-75">
-              <Image src="/file.svg" alt="Instagram" width={24} height={24} />
-            </a>
-          </div>
+        </div>
+
+        {/* About DoggDenn */}
+        <div>
+          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">About DoggDenn</h3>
+          <p className="text-xs sm:text-sm leading-relaxed">
+            Your one-stop shop for premium pet products. We are dedicated to providing quality items for your furry friends.
+          </p>
         </div>
       </div>
 
-      <div className="border-t border-white border-opacity-20 mt-8 pt-8 text-center text-sm">
-        <p>&copy; {new Date().getFullYear()} Doggdenn. All rights reserved.</p>
+      {/* Divider and Copyright */}
+      <div className="border-t border-white border-opacity-20 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm">
+        <p>&copy; {new Date().getFullYear()} DoggDenn. All rights reserved.</p>
       </div>
     </footer>
   );

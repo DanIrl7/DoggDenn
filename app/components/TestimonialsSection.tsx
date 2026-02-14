@@ -40,9 +40,9 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="w-full px-4 md:px-12 py-16 bg-gray-50">
+    <section className="w-full px-4 md:px-12 py-16 bg-[#FAF8F3]">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">What Our Customers Say</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-[#2C2C2C]">What Our Customers Say</h2>
         <p className="text-center text-gray-600 text-lg mb-12 max-w-2xl mx-auto">
           Thousands of happy pet owners trust Doggdenn for their furry friends&apos; needs.
         </p>
@@ -51,7 +51,7 @@ const TestimonialsSection = () => {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow duration-300"
             >
               {/* Star Rating */}
               <div className="flex gap-1 mb-4">

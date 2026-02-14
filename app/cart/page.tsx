@@ -52,13 +52,13 @@ export default function CartPage() {
 
   if (items.length === 0 && activeTab === 'cart') {
     return (
-      <main className="min-h-screen p-6 max-w-6xl mx-auto">
+      <main className="min-h-screen p-6 max-w-6xl mx-auto bg-[#FAF8F3]">
         <h1 className="text-4xl font-bold mb-8">Shopping Cart</h1>
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+        <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
           <p className="text-xl text-gray-600 mb-6">Your cart is empty</p>
           <Link
             href="/products"
-            className="inline-block bg-[#7d3d23] text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+            className="inline-block bg-[#7d3d23] text-white px-6 py-3 rounded-full hover:opacity-90 transition-opacity"
           >
             Continue Shopping
           </Link>
@@ -68,7 +68,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="min-h-screen p-6 max-w-6xl mx-auto">
+    <main className="min-h-screen p-6 max-w-6xl mx-auto bg-[#FAF8F3]">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-6">Account</h1>
 
@@ -78,13 +78,13 @@ export default function CartPage() {
             onClick={() => setActiveTab('cart')}
             className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
               activeTab === 'cart'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-[#7d3d23] text-[#7d3d23]'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
             Shopping Cart
             {items.length > 0 && (
-              <span className="ml-2 bg-blue-600 text-white text-sm rounded-full px-2 py-0.5">
+              <span className="ml-2 bg-[#7d3d23] text-white text-sm rounded-full px-2 py-0.5">
                 {items.length}
               </span>
             )}
@@ -93,7 +93,7 @@ export default function CartPage() {
             onClick={() => setActiveTab('orders')}
             className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
               activeTab === 'orders'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-[#7d3d23] text-[#7d3d23]'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -106,7 +106,7 @@ export default function CartPage() {
       {activeTab === 'cart' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
             <div className="space-y-4">
               {items.map((item) => (
                 <CartItemComponent key={item.id} item={item} />
@@ -115,7 +115,7 @@ export default function CartPage() {
           </div>
 
           {/* Cart Summary & Checkout */}
-          <div className="bg-white rounded-lg shadow-md p-6 h-fit">
+          <div className="bg-white rounded-2xl shadow-sm p-6 h-fit">
             <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
 
             <div className="space-y-3 border-b pb-4 mb-4">
@@ -149,7 +149,7 @@ export default function CartPage() {
             <button
               onClick={handleCheckout}
               disabled={isLoading}
-              className={`w-full text-white py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
+              className={`w-full text-white py-3 rounded-full font-semibold transition-all flex items-center justify-center gap-2 ${
                 isLoading
                   ? 'bg-gray-400 cursor-not-allowed opacity-70'
                   : 'bg-[#7d3d23] hover:opacity-90'
@@ -167,7 +167,7 @@ export default function CartPage() {
 
             <button
               onClick={() => clearCart()}
-              className="w-full border border-gray-300 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors mb-3"
+              className="w-full border border-gray-300 text-gray-700 py-2 rounded-full font-semibold hover:bg-gray-50 transition-colors mb-3"
             >
               Clear Cart
             </button>

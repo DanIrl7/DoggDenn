@@ -21,7 +21,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="flex justify-between p-2 items-center bg-white  shadow-md relative z-10">
+    <header className="flex justify-between p-2 items-center bg-[#FAF8F3] shadow-md relative z-10">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
         <Image
@@ -80,7 +80,7 @@ export default function Navbar() {
         <SignedOut>
           <SignInButton />
           <SignUpButton>
-            <button className="bg-[#7d3d23] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:opacity-90 transition-opacity duration-200">
+            <button className="bg-[#C09A7F] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:bg-[#B08874] transition-colors duration-200">
               Sign Up
             </button>
           </SignUpButton>

@@ -111,10 +111,10 @@ export default function SuccessPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen p-6 max-w-4xl mx-auto">
+      <main className="min-h-screen p-6 max-w-4xl mx-auto bg-[#FAF8F3]">
         <div className="flex items-center justify-center h-screen">
           <div className="text-center">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-12 h-12 border-4 border-[#7d3d23] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-xl text-gray-600">Loading your order...</p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function SuccessPage() {
 
   if (error) {
     return (
-      <main className="min-h-screen p-6 max-w-4xl mx-auto">
+      <main className="min-h-screen p-6 max-w-4xl mx-auto bg-[#FAF8F3]">
         <div className="text-center">
           <div className="mb-8">
             <div className="text-6xl mb-4">⚠️</div>
@@ -133,7 +133,7 @@ export default function SuccessPage() {
           </div>
           <Link
             href="/products"
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-block bg-[#7d3d23] text-white px-6 py-3 rounded-full hover:opacity-90 transition-colors"
           >
             Continue Shopping
           </Link>
@@ -144,12 +144,12 @@ export default function SuccessPage() {
 
   if (!order) {
     return (
-      <main className="min-h-screen p-6 max-w-4xl mx-auto">
+      <main className="min-h-screen p-6 max-w-4xl mx-auto bg-[#FAF8F3]">
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-4">Order Not Found</h1>
           <Link
             href="/products"
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-block bg-[#7d3d23] text-white px-6 py-3 rounded-full hover:opacity-90 transition-colors"
           >
             Continue Shopping
           </Link>
@@ -159,7 +159,7 @@ export default function SuccessPage() {
   }
 
   return (
-    <main className="min-h-screen p-6 max-w-4xl mx-auto">
+    <main className="min-h-screen p-6 max-w-4xl mx-auto bg-[#FAF8F3]">
       {/* Success Header */}
       <div className="text-center mb-12">
         <div className="mb-4">
@@ -176,7 +176,7 @@ export default function SuccessPage() {
       {/* Order Details Card */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Main Order Info */}
-        <div className="lg:col-span-2 bg-white rounded-lg shadow-lg p-8">
+        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-8">
           <h2 className="text-2xl font-bold mb-6">Order Details</h2>
 
           {/* Order Number */}
@@ -226,7 +226,7 @@ export default function SuccessPage() {
         </div>
 
         {/* Order Summary Card */}
-        <div className="bg-white rounded-lg shadow-lg p-8 h-fit">
+        <div className="bg-white rounded-2xl shadow-sm p-8 h-fit">
           <h3 className="text-xl font-bold mb-6">Order Summary</h3>
 
           <div className="space-y-3 mb-6 pb-6 border-b">
@@ -246,7 +246,7 @@ export default function SuccessPage() {
 
           <div className="flex justify-between items-center mb-6">
             <span className="text-lg font-bold">Total</span>
-            <span className="text-3xl font-bold text-green-600">
+            <span className="text-3xl font-bold text-[#7d3d23]">
               ${(order.amount / 100).toFixed(2)}
             </span>
           </div>
@@ -266,9 +266,9 @@ export default function SuccessPage() {
       </div>
 
       {/* Next Steps */}
-      <div className="bg-blue-50 rounded-lg border border-blue-200 p-8 mb-8">
-        <h3 className="text-lg font-bold text-blue-900 mb-4">What's Next?</h3>
-        <ul className="space-y-3 text-blue-900">
+      <div className="bg-[#f0ede5] rounded-2xl border border-[#e0ddd5] p-8 mb-8">
+        <h3 className="text-lg font-bold text-[#2C2C2C] mb-4">What's Next?</h3>
+        <ul className="space-y-3 text-gray-700">
           <li className="flex items-start">
             <span className="mr-3">📦</span>
             <span>Your order will be prepared and shipped within 2-3 business days</span>
@@ -288,13 +288,13 @@ export default function SuccessPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/products"
-          className="inline-block text-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          className="inline-block text-center bg-[#7d3d23] text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
         >
           Continue Shopping
         </Link>
         <Link
           href="/"
-          className="inline-block text-center bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+          className="inline-block text-center bg-gray-200 text-gray-900 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition-colors"
         >
           Back to Home
         </Link>

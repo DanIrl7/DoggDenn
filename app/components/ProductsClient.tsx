@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/fetcher';
 import CategorySidebar from './CategorySidebar';
@@ -18,6 +19,106 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [carouselPosition, setCarouselPosition] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Auto-rotate carousel every 5 seconds (only when no category is selected)
+  useEffect(() => {
+    if (selectedCategory) {
+      return; // Don't auto-rotate when a category is selected
+    }
+    
+    const interval = setInterval(() => {
+      setCarouselPosition((prev) => (prev + 1) % initialCategories.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [initialCategories.length, selectedCategory]);
+
+  // Update carousel to show selected category (center it)
+  useEffect(() => {
+    if (selectedCategory) {
+      const index = initialCategories.findIndex((cat) => cat.id === selectedCategory);
+      if (index !== -1) {
+        setCarouselPosition(index);
+      }
+    }
+  }, [selectedCategory, initialCategories]);
+
+  // Get the 3 visible categories (prev, current, next)
+  const getVisibleCategories = () => {
+    const length = initialCategories.length;
+    const prevIndex = (carouselPosition - 1 + length) % length;
+    const nextIndex = (carouselPosition + 1) % length;
+    
+    return [
+      { category: initialCategories[prevIndex], position: 'left' },
+      { category: initialCategories[carouselPosition], position: 'center' },
+      { category: initialCategories[nextIndex], position: 'right' },
+    ];
+  };
+
+  const handleCarouselNav = (direction: 'left' | 'right') => {
+    const length = initialCategories.length;
+    const newPosition = direction === 'left' 
+      ? (carouselPosition - 1 + length) % length 
+      : (carouselPosition + 1) % length;
+    
+    setCarouselPosition(newPosition);
+    // Set the category so sidebar highlights it
+    setSelectedCategory(initialCategories[newPosition].id);
+  };
+
+  const handleCategoryClick = (position: 'left' | 'center' | 'right') => {
+    const length = initialCategories.length;
+    let newPosition = carouselPosition;
+
+    if (position === 'left') {
+      newPosition = (carouselPosition - 1 + length) % length;
+    } else if (position === 'right') {
+      newPosition = (carouselPosition + 1) % length;
+    }
+
+    setCarouselPosition(newPosition);
+    setSelectedCategory(initialCategories[newPosition].id);
+  };
+
+  // Handle swipe gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    setTouchEnd(e.changedTouches[0].clientX);
+  };
+
+  // Detect swipe and navigate
+  useEffect(() => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50; // Swipe left = next category
+    const isRightSwipe = distance < -50; // Swipe right = prev category
+
+    if (isLeftSwipe) {
+      handleCarouselNav('right');
+    }
+    if (isRightSwipe) {
+      handleCarouselNav('left');
+    }
+  }, [touchStart, touchEnd]);
+
+  const handleCarouselNav_OLD = (direction: 'left' | 'right') => {
+    const length = initialCategories.length;
+    setCarouselPosition((prev) => {
+      if (direction === 'left') {
+        return (prev - 1 + length) % length;
+      } else {
+        return (prev + 1) % length;
+      }
+    });
+    setSelectedCategory(''); // Reset category selection
+  };
 
   // Use server data as initial state, only refetch when category changes
   const { data: products = initialProducts, isLoading } = useSWR<Product[]>(
@@ -54,11 +155,11 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
   };
 
   return (
-    <main className="flex min-h-screen bg-gray-50 flex-col lg:flex-row">
+    <main className="flex min-h-screen bg-[#FAF8F3] flex-col lg:flex-row">
       {/* Mobile Sidebar Toggle */}
       <button
         onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-        className="lg:hidden fixed top-20 left-4 z-40 bg-blue-600 text-white p-2 rounded-lg shadow-lg"
+        className="lg:hidden fixed top-20 left-4 z-40 bg-[#7d3d23] text-white p-2 rounded-lg shadow-lg"
       >
         {isMobileSidebarOpen ? '✕ Close' : '☰ Filters'}
       </button>
@@ -85,67 +186,133 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
       )}
 
       {/* Main Content */}
-      <div className="flex-1 w-full p-4 sm:p-6 lg:p-8">
-        {/* Category Tabs - Mobile Dropdown & Desktop Scroll */}
-        <div className="mb-6 sm:mb-8">
-          {/* Mobile Dropdown */}
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="lg:hidden w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium mb-4"
-          >
-            <option value="">All Products</option>
-            {initialCategories.map(category => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+      <div className="flex-1 w-full">
+        {/* Category Carousel Banner - Cover Flow */}
+        <div 
+          className="relative w-full h-[46rem] bg-black overflow-hidden mb-8 sm:mt-6 lg:mt-8 cursor-grab active:cursor-grabbing" 
+          style={{ perspective: '1000px' }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Carousel Container */}
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Left Arrow */}
+            <button
+              onClick={() => handleCarouselNav('left')}
+              className="absolute left-4 sm:left-8 z-40 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300"
+              aria-label="Previous category"
+            >
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-          {/* Desktop Horizontal Tabs */}
-          <div className="hidden lg:block overflow-x-auto">
-            <div className="flex gap-3 pb-4">
-              <button
-                onClick={() => setSelectedCategory('')}
-                disabled={isLoading}
-                className={`px-4 sm:px-6 py-2 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base flex items-center gap-2 ${
-                  isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                } ${
-                  selectedCategory === ''
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
-                }`}
-              >
-                {isLoading && selectedCategory === '' && (
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                )}
-                All Products
-              </button>
-              {initialCategories.map(category => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  disabled={isLoading}
-                  className={`px-4 sm:px-6 py-2 rounded-full font-semibold whitespace-nowrap transition-all text-sm sm:text-base flex items-center gap-2 ${
-                    isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                  } ${
-                    selectedCategory === category.id
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
-                  }`}
-                >
-                  {isLoading && selectedCategory === category.id && (
-                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  )}
-                  {category.name}
-                </button>
-              ))}
+            {/* Carousel Slides */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {getVisibleCategories().map(({ category, position }, idx) => {
+                let scale = 0.7;
+                let opacity = 0.6;
+                let zIndex = 10;
+                let rotateY = 0;
+                let translateX = 0;
+
+                if (position === 'center') {
+                  scale = 1;
+                  opacity = 1;
+                  zIndex = 30;
+                  rotateY = 0;
+                } else if (position === 'left') {
+                  scale = 0.75;
+                  opacity = 0.5;
+                  zIndex = 20;
+                  rotateY = 35;
+                  translateX = -60;
+                } else {
+                  scale = 0.75;
+                  opacity = 0.5;
+                  zIndex = 20;
+                  rotateY = -35;
+                  translateX = 60;
+                }
+
+                return (
+                  <div
+                    key={category.id}
+                    className="absolute h-full w-1/2 transition-all duration-500 ease-out cursor-pointer hover:opacity-100"
+                    onClick={() => handleCategoryClick(position)}
+                    style={{
+                      transform: `translateX(${translateX}%) scale(${scale}) rotateY(${rotateY}deg)`,
+                      opacity: opacity,
+                      zIndex: zIndex,
+                    }}
+                  >
+                    {/* Image Container with faster animation */}
+                    <div className="relative w-full h-full transition-all duration-300 ease-out">
+                      <Image
+                        src={category.image || '/placeholder.jpg'}
+                        alt={category.name}
+                        fill
+                        className="object-cover object-top"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/placeholder.jpg';
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
+
+            {/* Center Overlay (Text + Overlay) */}
+            <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 z-50 pointer-events-none transition-all duration-700 ease-out">
+              {initialCategories[carouselPosition] && (
+                <>
+                  <div className="absolute inset-0 bg-black/40"></div>
+                  <h2 className="relative text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4">
+                    {initialCategories[carouselPosition].name}
+                  </h2>
+                  <p className="relative text-base sm:text-lg text-white max-w-2xl">
+                    {initialCategories[carouselPosition].description}
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Right Arrow */}
+          <button
+            onClick={() => handleCarouselNav('right')}
+            className="absolute right-4 sm:right-8 z-40 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 top-1/2 -translate-y-1/2"
+            aria-label="Next category"
+          >
+            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Carousel Navigation Dots */}
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-40">
+            {initialCategories.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCarouselPosition(index);
+                  setSelectedCategory('');
+                }}
+                className={`h-2 rounded-full transition-all ${
+                  index === carouselPosition ? 'bg-white w-8' : 'bg-white/50 w-2 hover:bg-white/75'
+                }`}
+                aria-label={`Go to category ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
 
-        {/* Products Grid with Loading State */}
-        {isLoading ? (
+        <div className="px-4 sm:px-6 lg:px-8">
+
+          {/* Products Grid with Loading State */}
+          {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="bg-white rounded-lg overflow-hidden shadow-lg animate-pulse">
@@ -162,6 +329,7 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
         ) : (
           <ProductGrid products={filteredProducts} onProductClick={handleProductClick} />
         )}
+        </div>
       </div>
 
       {/* Product Modal */}

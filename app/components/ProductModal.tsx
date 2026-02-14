@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { Product } from '../types';
+import { useToast } from './ToastProvider';
 
 interface ProductModalProps {
   product: Product;
@@ -20,12 +21,14 @@ const ProductModal = ({
   onClose,
 }: ProductModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToast();
   const imageUrl = product.image ? product.image : (product.images && product.images.length > 0 ? product.images[0] : '');
   const finalImageUrl = imageUrl && imageUrl.trim() ? imageUrl : '/placeholder.jpg';
 
   const handleAddToCart = async () => {
     setIsLoading(true);
     onAddToCart();
+    showToast(`${product.name} added to cart!`, 'success');
     // Simulate async action
     await new Promise(resolve => setTimeout(resolve, 600));
     setIsLoading(false);
@@ -37,7 +40,7 @@ const ProductModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto"
+        className="bg-white rounded-3xl max-w-2xl w-full max-h-screen overflow-y-auto shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -50,13 +53,12 @@ const ProductModal = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6">
           {/* Product Image */}
-          <div className="relative h-64 sm:h-80 md:h-96 w-full bg-gray-100">
+          <div className="relative h-64 sm:h-80 md:h-96 w-full bg-gray-100 rounded-2xl overflow-hidden">
             <Image
               src={finalImageUrl}
               alt={product.name}
               layout="fill"
               objectFit="cover"
-              className="rounded-lg"
               onError={(e) => {
                 console.error(`Failed to load image for ${product.name}:`, finalImageUrl);
                 const target = e.target as HTMLImageElement;
@@ -69,7 +71,7 @@ const ProductModal = ({
           <div className="flex flex-col justify-between">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{product.name}</h2>
-              <p className="text-3xl sm:text-4xl font-bold text-blue-600 mb-3 sm:mb-4">${product.price.toFixed(2)}</p>
+              <p className="text-3xl sm:text-4xl font-bold text-[#7d3d23] mb-3 sm:mb-4">${product.price.toFixed(2)}</p>
               <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">{product.description}</p>
             </div>
 
@@ -77,7 +79,7 @@ const ProductModal = ({
             <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
                 <span className="font-semibold text-gray-700 text-sm sm:text-base">Quantity:</span>
-                <div className="flex items-center border border-gray-300 rounded-lg">
+                <div className="flex items-center border border-gray-300 rounded-full">
                   <button
                     onClick={() => onQuantityChange(quantity - 1)}
                     className="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 transition-colors text-sm sm:text-base"
@@ -97,10 +99,10 @@ const ProductModal = ({
               <button
                 onClick={handleAddToCart}
                 disabled={isLoading}
-                className={`w-full text-white font-bold py-2.5 sm:py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+                className={`w-full text-white font-bold py-2.5 sm:py-3 px-6 rounded-full transition-all duration-200 flex items-center justify-center gap-2 ${
                   isLoading
-                    ? 'bg-green-600 opacity-80 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    ? 'bg-[#6a3320] opacity-80 cursor-not-allowed'
+                    : 'bg-[#7d3d23] hover:bg-[#6a3320]'
                 }`}
               >
                 {isLoading ? (

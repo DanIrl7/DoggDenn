@@ -1,6 +1,6 @@
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#FAF8F3]">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-[#7d3d23] to-[#a0522d] text-white py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -32,23 +32,23 @@ export default function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section className="bg-gray-50 py-16 px-6">
+      <section className="bg-[#FAF8F3] py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-[#7d3d23] mb-12 text-center">Our Values</h2>
+          <h2 className="text-3xl font-bold text-[#2C2C2C] mb-12 text-center">Our Values</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-sm">
+            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <h3 className="text-xl font-bold text-[#7d3d23] mb-4">Quality</h3>
               <p className="text-gray-600">
                 We only stock products that meet our strict quality standards, ensuring your dog gets the best.
               </p>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm">
+            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <h3 className="text-xl font-bold text-[#7d3d23] mb-4">Trust</h3>
               <p className="text-gray-600">
                 Your satisfaction is our priority. We stand behind every product we offer.
               </p>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-sm">
+            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <h3 className="text-xl font-bold text-[#7d3d23] mb-4">Care</h3>
               <p className="text-gray-600">
                 We genuinely care about the wellbeing of all dogs and their happy, healthy lives.
@@ -66,7 +66,7 @@ export default function AboutPage() {
         </p>
         <a
           href="/products"
-          className="inline-block bg-white text-[#7d3d23] font-bold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          className="inline-block bg-white text-[#7d3d23] font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition-colors duration-200"
         >
           Browse Our Products
         </a>

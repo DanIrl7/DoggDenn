@@ -36,18 +36,18 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="w-full px-4 md:px-12 py-16 bg-white">
+    <section className="w-full px-4 md:px-12 py-16 bg-[#FAF8F3]">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">Why Choose Doggdenn?</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-[#2C2C2C]">Why Choose Doggdenn?</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature) => (
             <div
               key={feature.id}
-              className="flex flex-col items-center text-center p-6 rounded-lg hover:bg-gray-50 transition-colors duration-300"
+              className="flex flex-col items-center text-center p-6 rounded-2xl bg-white hover:shadow-lg transition-all duration-300 shadow-sm"
             >
               <div className="text-5xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+              <h3 className="text-xl font-bold text-[#2C2C2C] mb-3">{feature.title}</h3>
               <p className="text-gray-600 leading-relaxed">{feature.description}</p>
             </div>
           ))}

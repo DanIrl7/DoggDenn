@@ -32,7 +32,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
         return (
           <div
             key={product.id}
-            className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 text-left cursor-pointer"
+            className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 text-left cursor-pointer"
             onClick={() => onProductClick(product)}
           >
             <div className="relative h-48 sm:h-56 lg:h-64 w-full bg-gray-100">
@@ -52,7 +52,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
             <div className="p-3 sm:p-4">
               <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-2 line-clamp-2">{product.name}</h3>
               <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2">{product.description}</p>
-              <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-2 sm:mb-3">${product.price.toFixed(2)}</p>
+              <p className="text-lg sm:text-2xl font-bold text-[#7d3d23] mb-2 sm:mb-3">${product.price.toFixed(2)}</p>
               
               {/* Quantity Selector */}
               <div className="flex items-center gap-2 mb-2 sm:mb-3 flex-wrap">
