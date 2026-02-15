@@ -2,18 +2,9 @@
 
 import Link from 'next/link';
 import { useCartStore } from '@/app/store/cartStore';
-import { useEffect, useState } from 'react';
 
 export default function CartIcon() {
-  const [mounted, setMounted] = useState(false);
   const itemCount = useCartStore((state) => state.getItemCount());
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Return nothing until mounted on client to prevent hydration mismatch
-  if (!mounted) return null;
 
   return (
     <Link href="/cart" className="relative flex items-center justify-center">
