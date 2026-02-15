@@ -194,7 +194,7 @@ We'll notify you when your items have shipped.
 
 Thank you for your business!`;
 
-          await resend.emails.send({
+          await getResend().emails.send({
             from: process.env.EMAIL_FROM || 'orders@yourdomain.com',
             to: customerEmail,
             subject: `Order Confirmation #${order.id.slice(-6)}`,
