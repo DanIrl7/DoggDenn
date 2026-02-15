@@ -3,13 +3,24 @@ import Stripe from 'stripe';
 import { Resend } from 'resend';
 import prisma from '@/lib/prisma';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-01-28.clover',
-});
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not defined');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2026-01-28.clover',
+  });
+};
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const getResend = () => {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not defined');
+  }
+  return new Resend(process.env.RESEND_API_KEY);
+};
 
 export async function POST(req: NextRequest) {
+  const stripe = getStripe();
   const body = await req.text();
   const signature = req.headers.get('stripe-signature')!;
 

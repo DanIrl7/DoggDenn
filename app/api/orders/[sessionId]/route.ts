@@ -2,14 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 // import { auth } from '@clerk/nextjs/server';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-01-28.clover',
-});
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not defined');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2026-01-28.clover',
+  });
+};
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ sessionId: string }> }
 ) {
+  const stripe = getStripe();
 
 // try {
 //   const { userId } = await auth()

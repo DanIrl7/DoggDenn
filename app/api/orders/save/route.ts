@@ -3,9 +3,14 @@ import { auth, clerkClient } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-01-28.clover',
-});
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not defined');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2026-01-28.clover',
+  });
+};
 
 interface SaveOrderRequest {
   sessionId: string;
@@ -20,6 +25,7 @@ interface SaveOrderRequest {
 }
 
 export async function POST(request: NextRequest) {
+  const stripe = getStripe();
   try {
     // Check if user is authenticated
     const { userId } = await auth();
