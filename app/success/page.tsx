@@ -1,36 +1,23 @@
-'use client';
+import { Suspense } from 'react';
+import SuccessClient from '@/app/components/SuccessClient';
 
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useCartStore } from '@/app/store/cartStore';
-
-interface OrderDetails {
-  sessionId: string;
-  amount: number;
-  currency: string;
-  status: string;
-  items: {
-    id: string 
-    name: string;
-    quantity: number;
-    price: number;
-    image?: string; 
-  }[];
-  createdAt: string;
+function LoadingFallback() {
+  return (
+    <main className="min-h-screen bg-[#FAF8F3] p-6 flex items-center justify-center">
+      <div className="text-center">
+        <p className="text-gray-600">Loading order details...</p>
+      </div>
+    </main>
+  );
 }
 
 export default function SuccessPage() {
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get('session_id');
-  const [order, setOrder] = useState<OrderDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [hasSaved, setHasSaved] = useState(false);
-  const { items: cartItems, clearCart } = useCartStore();
-
-  useEffect(() => {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SuccessClient />
+    </Suspense>
+  );
+}
     if (!sessionId) {
       setError('No session ID found');
       setLoading(false);
