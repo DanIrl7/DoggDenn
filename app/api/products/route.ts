@@ -62,7 +62,6 @@ export async function POST(request: NextRequest) {
         description,
         price: parseFloat(price),
         image: image,
-        inventory: parseInt(inventory),
         categoryId: categoryId,
       },
     });
