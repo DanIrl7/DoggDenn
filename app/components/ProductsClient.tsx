@@ -35,18 +35,8 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
     return () => clearInterval(interval);
   }, [initialCategories.length, selectedCategory]);
 
-  // Update carousel to show selected category (center it)
-  useEffect(() => {
-    if (selectedCategory) {
-      const index = initialCategories.findIndex((cat) => cat.id === selectedCategory);
-      if (index !== -1) {
-        setCarouselPosition(index);
-      }
-    }
-  }, [selectedCategory, initialCategories]);
-
   // Get the 3 visible categories (prev, current, next)
-  const getVisibleCategories = () => {
+  const getVisibleCategories = (): Array<{ category: Category; position: 'left' | 'center' | 'right' }> => {
     const length = initialCategories.length;
     const prevIndex = (carouselPosition - 1 + length) % length;
     const nextIndex = (carouselPosition + 1) % length;
@@ -89,24 +79,28 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    setTouchEnd(e.changedTouches[0].clientX);
+    const touchEndValue = e.changedTouches[0].clientX;
+    
+    if (touchStart !== null) {
+      const distance = touchStart - touchEndValue;
+      const isLeftSwipe = distance > 50; // Swipe left = next category
+      const isRightSwipe = distance < -50; // Swipe right = prev category
+
+      if (isLeftSwipe || isRightSwipe) {
+        const length = initialCategories.length;
+        const direction = isLeftSwipe ? 'right' : 'left';
+        const newPosition = direction === 'left' 
+          ? (carouselPosition - 1 + length) % length 
+          : (carouselPosition + 1) % length;
+        
+        setCarouselPosition(newPosition);
+        setSelectedCategory(initialCategories[newPosition].id);
+      }
+    }
+    
+    setTouchStart(null);
+    setTouchEnd(null);
   };
-
-  // Detect swipe and navigate
-  useEffect(() => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50; // Swipe left = next category
-    const isRightSwipe = distance < -50; // Swipe right = prev category
-
-    if (isLeftSwipe) {
-      handleCarouselNav('right');
-    }
-    if (isRightSwipe) {
-      handleCarouselNav('left');
-    }
-  }, [touchStart, touchEnd]);
 
   const handleCarouselNav_OLD = (direction: 'left' | 'right') => {
     const length = initialCategories.length;
@@ -150,6 +144,10 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
   };
 
   const handleCategorySelect = (categoryId: string) => {
+    const index = initialCategories.findIndex((cat) => cat.id === categoryId);
+    if (index !== -1) {
+      setCarouselPosition(index);
+    }
     setSelectedCategory(categoryId);
     setIsMobileSidebarOpen(false);
   };

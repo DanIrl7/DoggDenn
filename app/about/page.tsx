@@ -62,7 +62,7 @@ export default function AboutPage() {
       <section className="bg-[#7d3d23] text-white py-16 px-6 text-center">
         <h2 className="text-3xl font-bold mb-6">Join Our Community</h2>
         <p className="text-lg mb-8 opacity-90">
-          Discover why thousands of dog owners trust DoggDenn for their pet's needs.
+          Discover why thousands of dog owners trust DoggDenn for their pet&#39;s needs.
         </p>
         <a
           href="/products"

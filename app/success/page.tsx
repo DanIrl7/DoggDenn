@@ -267,7 +267,7 @@ export default function SuccessPage() {
 
       {/* Next Steps */}
       <div className="bg-[#f0ede5] rounded-2xl border border-[#e0ddd5] p-8 mb-8">
-        <h3 className="text-lg font-bold text-[#2C2C2C] mb-4">What's Next?</h3>
+        <h3 className="text-lg font-bold text-[#2C2C2C] mb-4">What&#39;s Next?</h3>
         <ul className="space-y-3 text-gray-700">
           <li className="flex items-start">
             <span className="mr-3">📦</span>
@@ -275,7 +275,7 @@ export default function SuccessPage() {
           </li>
           <li className="flex items-start">
             <span className="mr-3">📧</span>
-            <span>You'll receive shipping updates via email</span>
+            <span>You&#39;ll receive shipping updates via email</span>
           </li>
           <li className="flex items-start">
             <span className="mr-3">🔍</span>

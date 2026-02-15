@@ -6,7 +6,7 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Contact Us</h1>
           <p className="text-lg md:text-xl opacity-90">
-            We'd love to hear from you. Get in touch with our team.
+            We&#39;d love to hear from you. Get in touch with our team.
           </p>
         </div>
       </section>
@@ -129,13 +129,13 @@ export default function ContactPage() {
             <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <h3 className="text-lg font-bold text-[#7d3d23] mb-2">Do you offer returns?</h3>
               <p className="text-gray-600">
-                Yes! We offer a 30-day return policy on most items. Contact us if you're not satisfied with your purchase.
+                Yes! We offer a 30-day return policy on most items. Contact us if you&#39;re not satisfied with your purchase.
               </p>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
               <h3 className="text-lg font-bold text-[#7d3d23] mb-2">Are your products pet-safe?</h3>
               <p className="text-gray-600">
-                Absolutely! All our products are carefully selected to ensure they're safe and beneficial for your furry friend.
+                Absolutely! All our products are carefully selected to ensure they&#39;re safe and beneficial for your furry friend.
               </p>
             </div>
           </div>
