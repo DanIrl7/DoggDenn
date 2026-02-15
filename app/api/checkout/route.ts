@@ -5,14 +5,20 @@ import { CheckoutSessionRequest } from '@/app/types';
 import { auth } from '@clerk/nextjs/server';
 // import prisma from '@/lib/prisma'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-01-28.clover'
-});
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not defined');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2026-01-28.clover'
+  });
+};
 
 // const MAX_METADATA_LENGTH = 500;
 
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripe();
     const { items, total }: CheckoutSessionRequest = await request.json();
     const origin = request.headers.get('origin') || 'http://localhost:3000';
 
