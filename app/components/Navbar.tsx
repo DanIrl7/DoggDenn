@@ -51,6 +51,11 @@ export default function Navbar() {
         <Link href="/contact" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200">
           Contact
         </Link>
+        <SignedIn>
+          <Link href="/account" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200">
+            Account
+          </Link>
+        </SignedIn>
         <AdminOnly>
           <Link
             href="/admin-dashboard"
@@ -105,6 +110,11 @@ export default function Navbar() {
           <Link href="/contact" className="text-[#7d3d23] hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
             Contact
           </Link>
+          <SignedIn>
+            <Link href="/account" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
+              Account
+            </Link>
+          </SignedIn>
           <AdminOnly>
             <Link
               href="/admin-dashboard"
