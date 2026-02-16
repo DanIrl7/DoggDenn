@@ -111,7 +111,7 @@ export default function Navbar() {
             Contact
           </Link>
           <SignedIn>
-            <Link href="/account" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
+            <Link href="/account" className="text-[#7d3d23] hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
               Account
             </Link>
           </SignedIn>
