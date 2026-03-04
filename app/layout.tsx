@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
 import {
   ClerkProvider
 } from '@clerk/nextjs'
@@ -41,7 +42,9 @@ export default function RootLayout({
       >
         <ToastProvider>
           <PageTransition />
-          <NavigationLoader />
+          <Suspense fallback={null}>
+            <NavigationLoader />
+          </Suspense>
           <Navbar />
           {children}
           <Footer />
