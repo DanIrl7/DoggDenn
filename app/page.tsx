@@ -1,63 +1,86 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import CategoriesSection from './components/CategoriesSection';
 import TestimonialsSection from './components/TestimonialsSection';
 import FeaturesSection from './components/FeaturesSection';
 import FeaturedProducts from './components/FeaturedProducts';
+import ApparelSection from './components/ApparelSection';
+import { useInView } from '@/app/hooks/useInView';
+import { useParallax } from '@/app/hooks/useParallax';
 
 export default function Home() {
 
+const { ref, isInView } = useInView<HTMLElement>();
+const parallaxRef = useParallax(0.3)
+
   return (
-   <main className="flex min-h-screen flex-col items-center justify-between bg-[#FAF8F3]"> 
-
+    <main className="flex min-h-screen flex-col items-center justify-between bg-background">
     {/* HERO SECTION */}
-    <section className="relative w-full min-h-screen flex items-center justify-center text-center">
+    <section ref={ref} className="relative w-full md:min-h-screen md:h-full flex md:items-center md:justify-start text-center overflow-hidden flex-col md:flex-row">
 
-      <Image
-        src="/hero1/hero1.webp"
-        alt="Doggdenn hero Image"
-        fill
-        priority
-        className="object-cover -z-10"
-      />
-      <div className="relative text-white bg-[#00000053] p-4 sm:p-6 md:p-8 rounded-lg max-w-xs sm:max-w-lg md:max-w-2xl mx-4">
-        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 sm:mb-4">
-          Welcome to Doggdenn!
+      <div
+        ref={parallaxRef}
+        className="md:absolute inset-0 w-full h-auto md:h-full"
+      >
+        <Image
+          src="/hero1/hero1.webp"
+          alt="Doggdenn hero Image"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
+
+      {/* Mobile Layout - Image on top */}
+      <div className="md:hidden w-full h-64 sm:h-80 relative flex-shrink-0">
+        <Image
+          src="/hero1/hero1.webp"
+          alt="Doggdenn hero Image"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
+
+      {/* Text Section - Mobile: Black background below image, Desktop: Overlay */}
+      <div className={`relative md:absolute md:justify-self-start w-full md:w-auto md:max-w-4xl z-10 text-white p-4 sm:p-6 md:p-8 md:rounded-lg md:mx-4 transition-all duration-700 flex flex-col justify-center py-8 md:py-0 bg-black/90 md:bg-transparent ${
+          isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}>
+        <h1 className="text-2xl/[2] sm:text-4xl md:text-5xl/[2] lg:text-6xl/[2] font-extrabold mb-3 sm:mb-4">
+          Everything Your Dog Needs to Feel at Home
         </h1>
-        <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8">
+        <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8">
           Your one-stop shop for premium pet products.
         </p>
-        <Link href="/products" className="inline-block bg-[#7d3d23] hover:bg-[#6a3320] text-white hover:text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-full text-sm sm:text-base transition duration-400">
-          Shop Now
+        <Link href="/products" className="inline-block bg-amber-600 border-2 border-amber-600 hover:bg-transparent hover:border-amber-600 hover:text-amber-600 hover:border-2 text-primary-foreground font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-full text-sm sm:text-base duration-300 w-fit">
+          Shop Later
         </Link>
       </div>
+
+      {/* Scroll cue - Desktop only */}
+      <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-1 text-white opacity-80">
+        <span className="text-sm tracking-widest uppercase">Scroll</span>
+        <svg
+          className="w-6 h-6 animate-bounce"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
     </section>
+
+    
+<CategoriesSection />
+
+    <ApparelSection />
 
     <FeaturedProducts />
-
-    { /*APPAREL SECTION */ }
-
-    <section className="relative w-full min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
-      <Image
-        src="/Frosty.jpg"
-        alt="Happy dog playing in winter snow"
-        fill
-        className="object-cover -z-10"
-      />
-      <div className="relative z-10 text-white bg-[#00000053] p-4 sm:p-6 md:p-8 rounded-lg max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-3xl text-left">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 md:mb-6">
-          Winter Adventures Await.
-        </h2>
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl font-medium mb-4 sm:mb-6 md:mb-8 leading-relaxed">
-          Keep your furry friend warm and comfortable during those chilly winter months. Our premium winter collection features durable gear, cozy beds, and protective apparel designed to keep your dog happy and healthy in any weather.
-        </p>
-        <Link href="/products?category=winter" className="inline-block border-2 border-white text-white font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-full text-sm sm:text-base transition duration-300 hover:bg-white hover:text-[#7d3d23]">
-          Shop Winter Collection
-        </Link>
-      </div>
-    </section>
-
-    <CategoriesSection />
 
     <FeaturesSection />
 

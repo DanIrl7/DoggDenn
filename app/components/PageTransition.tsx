@@ -1,18 +1,9 @@
 'use client'
 
-import { useTransition } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useNavigationStore } from '@/app/store/navigationStore';
 
 export default function PageTransition() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
-  const [isNavigating, setIsNavigating] = useState(false);
-
-  useEffect(() => {
-    setIsNavigating(isPending);
-  }, [isPending]);
+  const isNavigating = useNavigationStore((s) => s.isNavigating);
 
   return (
     <>

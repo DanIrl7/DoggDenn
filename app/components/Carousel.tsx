@@ -36,8 +36,9 @@ export default function Carousel({ images, options }: CarouselProps) {
                   src={image.src}
                   alt={image.alt}
                   fill
+                  objectFit='contain'
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="absolute inset-0 w-full h-full rounded-lg object-cover"
+                  className="absolute object-contain inset-0 h-full rounded-lg"
                 />
               </div>
             </div>

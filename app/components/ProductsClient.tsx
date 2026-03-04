@@ -1,9 +1,14 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import useSWR from 'swr';
+import useEmblaCarousel from 'embla-carousel-react';
 import { fetcher } from '@/lib/fetcher';
+import { useToast } from './ToastProvider';
+import { useCartStore } from '@/app/store/cartStore';
 import CategorySidebar from './CategorySidebar';
 import ProductGrid from './ProductGrid';
 import ProductModal from './ProductModal';
@@ -15,103 +20,89 @@ interface ProductsClientProps {
 }
 
 export default function ProductsClient({ initialCategories, initialProducts }: ProductsClientProps) {
+  const router = useRouter();
+  const { user } = useUser();
+  const { showToast } = useToast();
+  const { addItem } = useCartStore();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [carouselPosition, setCarouselPosition] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isAutoRotating, setIsAutoRotating] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [carouselApi, setCarouselApi] = useState<any>(null);
+  const [selectedSnap, setSelectedSnap] = useState(0);
 
-  // Auto-rotate carousel every 5 seconds (only when no category is selected)
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      align: 'center',
+      loop: true,
+      slidesToScroll: 1,
+    },
+    []
+  );
+
+  // Initialize carousel
   useEffect(() => {
-    if (selectedCategory) {
-      return; // Don't auto-rotate when a category is selected
-    }
+    if (!emblaApi) return;
     
-    const interval = setInterval(() => {
-      setCarouselPosition((prev) => (prev + 1) % initialCategories.length);
+    setCarouselApi(emblaApi);
+  }, [emblaApi]);
+
+  // Auto-rotate carousel
+  useEffect(() => {
+    if (!carouselApi || !isAutoRotating || selectedCategory) {
+      return;
+    }
+
+    const autoScroll = setInterval(() => {
+      carouselApi.scrollNext();
     }, 5000);
-    return () => clearInterval(interval);
-  }, [initialCategories.length, selectedCategory]);
 
-  // Get the 3 visible categories (prev, current, next)
-  const getVisibleCategories = (): Array<{ category: Category; position: 'left' | 'center' | 'right' }> => {
-    const length = initialCategories.length;
-    const prevIndex = (carouselPosition - 1 + length) % length;
-    const nextIndex = (carouselPosition + 1) % length;
-    
-    return [
-      { category: initialCategories[prevIndex], position: 'left' },
-      { category: initialCategories[carouselPosition], position: 'center' },
-      { category: initialCategories[nextIndex], position: 'right' },
-    ];
-  };
+    return () => clearInterval(autoScroll);
+  }, [carouselApi, isAutoRotating, selectedCategory]);
 
-  const handleCarouselNav = (direction: 'left' | 'right') => {
-    const length = initialCategories.length;
-    const newPosition = direction === 'left' 
-      ? (carouselPosition - 1 + length) % length 
-      : (carouselPosition + 1) % length;
-    
-    setCarouselPosition(newPosition);
-    // Set the category so sidebar highlights it
-    setSelectedCategory(initialCategories[newPosition].id);
-  };
+  // Handle scroll changes
+  useEffect(() => {
+    if (!carouselApi) return;
 
-  const handleCategoryClick = (position: 'left' | 'center' | 'right') => {
-    const length = initialCategories.length;
-    let newPosition = carouselPosition;
+    const onSelect = () => {
+      setSelectedSnap(carouselApi.selectedScrollSnap());
+    };
 
-    if (position === 'left') {
-      newPosition = (carouselPosition - 1 + length) % length;
-    } else if (position === 'right') {
-      newPosition = (carouselPosition + 1) % length;
+    carouselApi.on('select', onSelect);
+    return () => {
+      carouselApi.off('select', onSelect);
+    };
+  }, [carouselApi]);
+
+  // Scroll carousel to selected category
+  useEffect(() => {
+    if (!carouselApi || !selectedCategory) return;
+
+    const categoryIndex = initialCategories.findIndex(c => c.id === selectedCategory);
+    if (categoryIndex !== -1) {
+      carouselApi.scrollTo(categoryIndex);
     }
+  }, [carouselApi, selectedCategory, initialCategories]);
 
-    setCarouselPosition(newPosition);
-    setSelectedCategory(initialCategories[newPosition].id);
-  };
-
-  // Handle swipe gestures
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndValue = e.changedTouches[0].clientX;
-    
-    if (touchStart !== null) {
-      const distance = touchStart - touchEndValue;
-      const isLeftSwipe = distance > 50; // Swipe left = next category
-      const isRightSwipe = distance < -50; // Swipe right = prev category
-
-      if (isLeftSwipe || isRightSwipe) {
-        const length = initialCategories.length;
-        const direction = isLeftSwipe ? 'right' : 'left';
-        const newPosition = direction === 'left' 
-          ? (carouselPosition - 1 + length) % length 
-          : (carouselPosition + 1) % length;
-        
-        setCarouselPosition(newPosition);
-        setSelectedCategory(initialCategories[newPosition].id);
-      }
+  const scrollPrev = useCallback(() => {
+    if (carouselApi) {
+      carouselApi.scrollPrev();
+      setIsAutoRotating(false);
     }
-    
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
+  }, [carouselApi]);
 
-  const handleCarouselNav_OLD = (direction: 'left' | 'right') => {
-    const length = initialCategories.length;
-    setCarouselPosition((prev) => {
-      if (direction === 'left') {
-        return (prev - 1 + length) % length;
-      } else {
-        return (prev + 1) % length;
-      }
-    });
-    setSelectedCategory(''); // Reset category selection
+  const scrollNext = useCallback(() => {
+    if (carouselApi) {
+      carouselApi.scrollNext();
+      setIsAutoRotating(false);
+    }
+  }, [carouselApi]);
+
+  const handleGridCategoryClick = (category: Category) => {
+    setSelectedCategory(category.id);
+    setIsAutoRotating(false);
   };
 
   // Use server data as initial state, only refetch when category changes
@@ -125,15 +116,93 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
     ? products.filter(p => p.categoryId === selectedCategory)
     : products;
 
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = (product: Product, qty: number = 1) => {
     setSelectedProduct(product);
-    setQuantity(1);
+    setQuantity(qty);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (selectedProduct) {
-      console.log(`Added ${quantity} of ${selectedProduct.name} to cart`);
-      setSelectedProduct(null);
+      // Check if user is signed in first
+      if (!user) {
+        showToast('Please sign in to add items to cart', 'info');
+        router.push('/sign-in');
+        return;
+      }
+
+      try {
+        // Show yellow toast
+        showToast(`${selectedProduct.name} is being added to cart`, 'pending');
+        
+        // Call API to persist to database
+        const response = await fetch('/api/cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: selectedProduct.id,
+            name: selectedProduct.name,
+            price: selectedProduct.price,
+            quantity,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to add item to cart');
+        }
+
+        // Update local cart state
+        addItem(selectedProduct, quantity);
+        
+        // Show green toast on success
+        showToast(`${selectedProduct.name} has been added to cart`, 'success');
+        
+        setSelectedProduct(null);
+        setQuantity(1);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to add item to cart';
+        showToast(`Error: ${errorMessage}`, 'error');
+      }
+    }
+  };
+
+  const handleDirectAddToCart = async (product: Product, qty: number) => {
+    // Check if user is signed in first
+    if (!user) {
+      showToast('Please sign in to add items to cart', 'info');
+      router.push('/sign-in');
+      return;
+    }
+
+    try {
+      // Show yellow toast
+      showToast(`${product.name} is being added to cart`, 'pending');
+      
+      // Call API to persist to database
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: qty,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to add item to cart');
+      }
+
+      // Update local cart state
+      addItem(product, qty);
+      
+      // Show green toast on success
+      showToast(`${product.name} has been added to cart`, 'success');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add item to cart';
+      showToast(`Error: ${errorMessage}`, 'error');
     }
   };
 
@@ -144,20 +213,17 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
   };
 
   const handleCategorySelect = (categoryId: string) => {
-    const index = initialCategories.findIndex((cat) => cat.id === categoryId);
-    if (index !== -1) {
-      setCarouselPosition(index);
-    }
     setSelectedCategory(categoryId);
+    setIsAutoRotating(false);
     setIsMobileSidebarOpen(false);
   };
 
   return (
-    <main className="flex min-h-screen bg-[#FAF8F3] flex-col lg:flex-row">
+    <main className="flex min-h-screen bg-background flex-col lg:flex-row">
       {/* Mobile Sidebar Toggle */}
       <button
         onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-        className="lg:hidden fixed top-20 left-4 z-40 bg-[#7d3d23] text-white p-2 rounded-lg shadow-lg"
+        className="lg:hidden fixed top-20 left-4 z-40 bg-white text-primary-foreground p-2 rounded-lg shadow-lg"
       >
         {isMobileSidebarOpen ? '✕ Close' : '☰ Filters'}
       </button>
@@ -185,125 +251,92 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
 
       {/* Main Content */}
       <div className="flex-1 w-full">
-        {/* Category Carousel Banner - Cover Flow */}
-        <div 
-          className="relative w-full h-[46rem] bg-black overflow-hidden mb-8 sm:mt-6 lg:mt-8 cursor-grab active:cursor-grabbing" 
-          style={{ perspective: '1000px' }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* Carousel Container */}
-          <div className="relative w-full h-full flex items-center justify-center">
-            {/* Left Arrow */}
-            <button
-              onClick={() => handleCarouselNav('left')}
-              className="absolute left-4 sm:left-8 z-40 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300"
-              aria-label="Previous category"
-            >
-              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            {/* Carousel Slides */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {getVisibleCategories().map(({ category, position }, idx) => {
-                let scale = 0.7;
-                let opacity = 0.6;
-                let zIndex = 10;
-                let rotateY = 0;
-                let translateX = 0;
-
-                if (position === 'center') {
-                  scale = 1;
-                  opacity = 1;
-                  zIndex = 30;
-                  rotateY = 0;
-                } else if (position === 'left') {
-                  scale = 0.75;
-                  opacity = 0.5;
-                  zIndex = 20;
-                  rotateY = 35;
-                  translateX = -60;
-                } else {
-                  scale = 0.75;
-                  opacity = 0.5;
-                  zIndex = 20;
-                  rotateY = -35;
-                  translateX = 60;
-                }
-
-                return (
-                  <div
-                    key={category.id}
-                    className="absolute h-full w-1/2 transition-all duration-500 ease-out cursor-pointer hover:opacity-100"
-                    onClick={() => handleCategoryClick(position)}
-                    style={{
-                      transform: `translateX(${translateX}%) scale(${scale}) rotateY(${rotateY}deg)`,
-                      opacity: opacity,
-                      zIndex: zIndex,
-                    }}
-                  >
-                    {/* Image Container with faster animation */}
-                    <div className="relative w-full h-full transition-all duration-300 ease-out">
-                      <Image
-                        src={category.image || '/placeholder.jpg'}
-                        alt={category.name}
-                        fill
-                        className="object-cover object-top"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = '/placeholder.jpg';
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Center Overlay (Text + Overlay) */}
-            <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 z-50 pointer-events-none transition-all duration-700 ease-out">
-              {initialCategories[carouselPosition] && (
+      {/* Category Grid Banner */}
+        <div className="relative w-full bg-black px-4 sm:px-6 lg:px-8 py-8 mb-8 sm:mt-6 lg:mt-8">
+          {/* Grid Container */}
+          <div className="max-w-7xl mx-auto">
+            {/* Category Name and Description */}
+            <div className="mb-6 text-white h-32 sm:h-36 flex flex-col justify-between">
+              {selectedCategory && initialCategories.find(c => c.id === selectedCategory) ? (
                 <>
-                  <div className="absolute inset-0 bg-black/40"></div>
-                  <h2 className="relative text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4">
-                    {initialCategories[carouselPosition].name}
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 line-clamp-2">
+                    {initialCategories.find(c => c.id === selectedCategory)?.name}
                   </h2>
-                  <p className="relative text-base sm:text-lg text-white max-w-2xl">
-                    {initialCategories[carouselPosition].description}
+                  <p className="text-base sm:text-lg text-white/80 line-clamp-2">
+                    {initialCategories.find(c => c.id === selectedCategory)?.description || 'No description available'}
                   </p>
                 </>
-              )}
+              ) : initialCategories[selectedSnap] ? (
+                <>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 line-clamp-2">
+                    {initialCategories[selectedSnap]?.name}
+                  </h2>
+                  <p className="text-base sm:text-lg text-white/80 line-clamp-2">
+                    {initialCategories[selectedSnap]?.description || 'No description available'}
+                  </p>
+                </>
+              ) : null}
             </div>
-          </div>
 
-          {/* Right Arrow */}
-          <button
-            onClick={() => handleCarouselNav('right')}
-            className="absolute right-4 sm:right-8 z-40 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 top-1/2 -translate-y-1/2"
-            aria-label="Next category"
-          >
-            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Carousel Navigation Dots */}
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-40">
-            {initialCategories.map((_, index) => (
+            {/* Carousel Container */}
+            <div className="flex items-center gap-4">
+              {/* Left Arrow */}
               <button
-                key={index}
-                onClick={() => {
-                  setCarouselPosition(index);
-                  setSelectedCategory('');
-                }}
-                className={`h-2 rounded-full transition-all ${
-                  index === carouselPosition ? 'bg-white w-8' : 'bg-white/50 w-2 hover:bg-white/75'
-                }`}
-                aria-label={`Go to category ${index + 1}`}
-              />
-            ))}
+                onClick={scrollPrev}
+                className="flex-shrink-0 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300"
+                aria-label="Previous categories"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {/* Embla Carousel */}
+              <div className="flex-1 overflow-hidden" ref={emblaRef}>
+                <div className="flex gap-8 px-8">
+                  {initialCategories.map((category) => (
+                    <div 
+                      key={category.id} 
+                      className={`transition-all duration-300 ${
+                        selectedCategory === category.id || initialCategories[selectedSnap]?.id === category.id
+                          ? 'flex-[0_0_100%] sm:flex-[0_0_calc(50%-2rem)] lg:flex-[0_0_calc(45%-5rem)]'
+                          : 'flex-[0_0_100%] sm:flex-[0_0_calc(50%-2rem)] lg:flex-[0_0_calc(33.333%-2rem)]'
+                      }`}
+                    >
+                      <button
+                        onClick={() => handleGridCategoryClick(category)}
+                        className={`w-full relative overflow-hidden rounded-lg h-56 sm:h-64 transition-all duration-300 ${
+                          selectedCategory === category.id || initialCategories[selectedSnap]?.id === category.id
+                            ? 'ring-8 ring-[#ffffff20] shadow-2xl'
+                            : 'opacity-75 hover:opacity-100'
+                        }`}
+                      >
+                        <Image
+                          src={category.image || '/placeholder.jpg'}
+                          alt={category.name}
+                          fill
+                          className="object-cover hover:scale-110 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+                          <p className="text-white font-bold text-center px-2">{category.name}</p>
+                        </div>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Arrow */}
+              <button
+                onClick={scrollNext}
+                className="flex-shrink-0 bg-white/20 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300"
+                aria-label="Next categories"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -325,7 +358,11 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
             ))}
           </div>
         ) : (
-          <ProductGrid products={filteredProducts} onProductClick={handleProductClick} />
+          <ProductGrid 
+            products={filteredProducts} 
+            onProductClick={handleProductClick}
+            onDirectAddToCart={handleDirectAddToCart}
+          />
         )}
         </div>
       </div>

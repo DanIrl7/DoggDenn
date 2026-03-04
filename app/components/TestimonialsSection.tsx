@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image';
+import { useInView } from '@/app/hooks/useInView';
 
 interface Testimonial {
   id: string;
@@ -12,6 +13,7 @@ interface Testimonial {
 }
 
 const TestimonialsSection = () => {
+  const { ref, isInView } = useInView<HTMLElement>(0.1, 'TestimonialsSection');
   const testimonials: Testimonial[] = [
     {
       id: '1',
@@ -40,9 +42,11 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="w-full px-4 md:px-12 py-16 bg-[#FAF8F3]">
+    <section ref={ref} className={`w-full px-4 md:px-12 py-16 bg-background transition-all duration-700 ${
+      isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+    }`}>
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-[#2C2C2C]">What Our Customers Say</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-foreground">What Our Customers Say</h2>
         <p className="text-center text-gray-600 text-lg mb-12 max-w-2xl mx-auto">
           Thousands of happy pet owners trust Doggdenn for their furry friends&apos; needs.
         </p>
@@ -71,8 +75,8 @@ const TestimonialsSection = () => {
                   <Image
                     src={testimonial.image}
                     alt={testimonial.name}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 <div>

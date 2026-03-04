@@ -19,7 +19,7 @@ const CategorySidebar = ({ categories, selectedCategory, onSelectCategory }: Cat
           onClick={() => onSelectCategory('')}
           className={`w-full text-left px-4 py-2 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base ${
             selectedCategory === ''
-              ? 'bg-[#7d3d23] text-white'
+              ? 'bg-primary text-primary-foreground'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -31,7 +31,7 @@ const CategorySidebar = ({ categories, selectedCategory, onSelectCategory }: Cat
             onClick={() => onSelectCategory(category.id)}
             className={`w-full text-left px-4 py-2 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base ${
               selectedCategory === category.id
-                ? 'bg-[#7d3d23] text-white'
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >

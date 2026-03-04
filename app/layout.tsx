@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageTransition from "./components/PageTransition";
 import { ToastProvider } from "./components/ToastProvider";
+import NavigationLoader from "./components/NavigationLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
       >
         <ToastProvider>
           <PageTransition />
+          <NavigationLoader />
           <Navbar />
           {children}
           <Footer />

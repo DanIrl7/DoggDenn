@@ -1,6 +1,7 @@
 import { Webhook } from 'svix';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { getClerkWebhookSecret } from '@/lib/webhookSecrets';
 
 interface ClerkEvent {
   type: string;
@@ -16,16 +17,8 @@ interface ClerkEvent {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the webhook secret from environment
-    const webhookSecret = process.env.CLERK_WEBHOOK_SECRET_DEV;
-    
-    if (!webhookSecret) {
-      console.error('CLERK_WEBHOOK_SECRET not configured');
-      return NextResponse.json(
-        { error: 'Webhook secret not configured' },
-        { status: 500 }
-      );
-    }
+    // Get the webhook secret based on the request origin
+    const webhookSecret = getClerkWebhookSecret(request);
 
     // Get signature headers from request
     const signature = request.headers.get('svix-signature');

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 export interface ToastMessage {
   id: string;
   message: string;
-  type: 'success' | 'error' | 'info';
+  type: 'success' | 'error' | 'info' | 'pending';
 }
 
 interface ToastProps {
@@ -17,7 +17,7 @@ const Toast = ({ toast, onClose }: ToastProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose(toast.id);
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [toast.id, onClose]);
@@ -26,23 +26,25 @@ const Toast = ({ toast, onClose }: ToastProps) => {
     success: 'bg-green-500',
     error: 'bg-red-500',
     info: 'bg-blue-500',
+    pending: 'bg-yellow-500',
   }[toast.type];
 
   const icon = {
     success: '✓',
     error: '✕',
     info: 'ℹ',
+    pending: '⏳',
   }[toast.type];
 
   return (
     <div
-      className={`${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fade-in-up`}
+      className={`${bgColor} text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 animate-fade-in-up`}
       style={{
-        animation: 'fadeInUp 0.3s ease-out, fadeOutDown 0.3s ease-out 2.7s forwards',
+        animation: 'fadeInDown 0.3s ease-out, fadeOutUp 0.3s ease-out 2.7s forwards',
       }}
     >
-      <span className="text-xl font-bold">{icon}</span>
-      <span className="font-medium">{toast.message}</span>
+      <span className="text-3xl font-bold">{icon}</span>
+      <span className="font-medium text-lg">{toast.message}</span>
     </div>
   );
 };

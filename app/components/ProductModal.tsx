@@ -3,13 +3,12 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { Product } from '../types';
-import { useToast } from './ToastProvider';
 
 interface ProductModalProps {
   product: Product;
   quantity: number;
   onQuantityChange: (quantity: number) => void;
-  onAddToCart: () => void;
+  onAddToCart: () => Promise<void>;
   onClose: () => void;
 }
 
@@ -21,17 +20,17 @@ const ProductModal = ({
   onClose,
 }: ProductModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { showToast } = useToast();
   const imageUrl = product.image ? product.image : (product.images && product.images.length > 0 ? product.images[0] : '');
   const finalImageUrl = imageUrl && imageUrl.trim() ? imageUrl : '/placeholder.jpg';
 
   const handleAddToCart = async () => {
     setIsLoading(true);
-    onAddToCart();
-    showToast(`${product.name} added to cart!`, 'success');
-    // Simulate async action
-    await new Promise(resolve => setTimeout(resolve, 600));
-    setIsLoading(false);
+    try {
+      await onAddToCart();
+      // onAddToCart will handle toasts and closing
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -40,7 +39,7 @@ const ProductModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl max-w-2xl w-full max-h-screen overflow-y-auto shadow-2xl"
+        className="glass-card rounded-3xl max-w-2xl w-full max-h-screen overflow-y-auto shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -59,11 +58,6 @@ const ProductModal = ({
               alt={product.name}
               layout="fill"
               objectFit="cover"
-              onError={(e) => {
-                console.error(`Failed to load image for ${product.name}:`, finalImageUrl);
-                const target = e.target as HTMLImageElement;
-                target.src = '/placeholder.jpg';
-              }}
             />
           </div>
 
@@ -71,7 +65,7 @@ const ProductModal = ({
           <div className="flex flex-col justify-between">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{product.name}</h2>
-              <p className="text-3xl sm:text-4xl font-bold text-[#7d3d23] mb-3 sm:mb-4">${product.price.toFixed(2)}</p>
+              <p className="text-3xl sm:text-4xl font-bold text-primary mb-3 sm:mb-4">${product.price.toFixed(2)}</p>
               <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">{product.description}</p>
             </div>
 
@@ -82,14 +76,14 @@ const ProductModal = ({
                 <div className="flex items-center border border-gray-300 rounded-full">
                   <button
                     onClick={() => onQuantityChange(quantity - 1)}
-                    className="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 transition-colors text-sm sm:text-base"
+                    className="px-3 sm:px-4 py-2 text-black hover:border-black hover:rounded-lg transition-colors text-sm sm:text-base"
                   >
                     −
                   </button>
-                  <span className="px-3 sm:px-4 py-2 font-bold text-base sm:text-lg">{quantity}</span>
+                  <span className="px-3 sm:px-4 py-2 font-bold text-black sm:text-lg">{quantity}</span>
                   <button
                     onClick={() => onQuantityChange(quantity + 1)}
-                    className="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 transition-colors text-sm sm:text-base"
+                    className="px-3 sm:px-4 py-2 text-gray-600 hover:border-black hover:rounded-lg transition-colors text-sm sm:text-black"
                   >
                     +
                   </button>
@@ -101,8 +95,8 @@ const ProductModal = ({
                 disabled={isLoading}
                 className={`w-full text-white font-bold py-2.5 sm:py-3 px-6 rounded-full transition-all duration-200 flex items-center justify-center gap-2 ${
                   isLoading
-                    ? 'bg-[#6a3320] opacity-80 cursor-not-allowed'
-                    : 'bg-[#7d3d23] hover:bg-[#6a3320]'
+                    ? 'bg-black opacity-80 cursor-not-allowed'
+                    : 'bg-black hover:bg-amber-600'
                 }`}
               >
                 {isLoading ? (

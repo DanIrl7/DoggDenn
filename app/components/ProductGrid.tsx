@@ -3,15 +3,14 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { Product } from '../types';
-import { useCartStore } from '@/app/store/cartStore';
 
 interface ProductGridProps {
   products: Product[];
-  onProductClick: (product: Product) => void;
+  onProductClick: (product: Product, quantity: number) => void;
+  onDirectAddToCart: (product: Product, quantity: number) => Promise<void>;
 }
 
-const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
-  const addItem = useCartStore((state) => state.addItem);
+const ProductGrid = ({ products, onProductClick, onDirectAddToCart }: ProductGridProps) => {
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
 
@@ -24,7 +23,7 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+    <div className="grid grid-cols-1 justify-items-center sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
       {products.map(product => {
         const imageUrl = product.image ? product.image : (product.images && product.images.length > 0 ? product.images[0] : '');
         const finalImageUrl = imageUrl && imageUrl.trim() ? imageUrl : '/placeholder.jpg';
@@ -32,27 +31,23 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
         return (
           <div
             key={product.id}
-            className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 text-left cursor-pointer"
-            onClick={() => onProductClick(product)}
+            className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 text-left cursor-pointer w-full max-w-sm"
+            onClick={() => onProductClick(product, 1)}
           >
-            <div className="relative h-48 sm:h-56 lg:h-64 w-full bg-gray-100">
+            <div className="relative aspect-[9/10] md:aspect-square lg:aspect-square w-full bg-gray-100">
               <Image
                 src={finalImageUrl}
                 alt={product.name}
-                layout="fill"
-                objectFit="cover"
+                fill
+                objectFit='fill'
                 className="hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  console.error(`Failed to load image for ${product.name}:`, finalImageUrl);
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/placeholder.jpg';
-                }}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 63vw, 55vw"
               />
             </div>
             <div className="p-3 sm:p-4">
               <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-2 line-clamp-2">{product.name}</h3>
               <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2">{product.description}</p>
-              <p className="text-lg sm:text-2xl font-bold text-[#7d3d23] mb-2 sm:mb-3">${product.price.toFixed(2)}</p>
+              <p className="text-lg sm:text-2xl font-bold text-primary mb-2 sm:mb-3">${product.price.toFixed(2)}</p>
               
               {/* Quantity Selector */}
               <div className="flex items-center gap-2 mb-2 sm:mb-3 flex-wrap">
@@ -93,20 +88,21 @@ const ProductGrid = ({ products, onProductClick }: ProductGridProps) => {
               </div>
               
               <button
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.stopPropagation();
-                  setLoadingProductId(product.id);
                   const quantity = quantities[product.id] || 1;
-                  addItem(product, quantity);
-                  setQuantities({ ...quantities, [product.id]: 1 });
-                  // Simulate loading state
-                  setTimeout(() => setLoadingProductId(null), 800);
+                  setLoadingProductId(product.id);
+                  try {
+                    await onDirectAddToCart(product, quantity);
+                  } finally {
+                    setLoadingProductId(null);
+                  }
                 }}
                 disabled={loadingProductId === product.id}
                 className={`w-full text-white py-2 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${
                   loadingProductId === product.id
-                    ? 'bg-green-600 opacity-80 cursor-not-allowed'
-                    : 'bg-[#7d3d23] hover:opacity-90'
+                    ? 'bg-black opacity-70 cursor-not-allowed'
+                    : 'bg-black hover:opacity-90'
                 }`}
               >
                 {loadingProductId === product.id ? (

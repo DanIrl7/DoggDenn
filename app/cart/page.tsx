@@ -52,13 +52,13 @@ export default function CartPage() {
 
   if (items.length === 0 && activeTab === 'cart') {
     return (
-      <main className="min-h-screen p-6 max-w-6xl mx-auto bg-[#FAF8F3]">
+      <main className="min-h-screen p-6 max-w-6xl mx-auto bg-background">
         <h1 className="text-4xl font-bold mb-8">Shopping Cart</h1>
         <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
           <p className="text-xl text-gray-600 mb-6">Your cart is empty</p>
           <Link
             href="/products"
-            className="inline-block bg-[#7d3d23] text-white px-6 py-3 rounded-full hover:opacity-90 transition-opacity"
+            className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-full hover:opacity-90 transition-opacity"
           >
             Continue Shopping
           </Link>
@@ -68,7 +68,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="min-h-screen p-6 max-w-6xl mx-auto bg-[#FAF8F3]">
+    <main className="min-h-screen p-6 max-w-6xl mx-auto bg-background">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-6">Account</h1>
 
@@ -78,13 +78,13 @@ export default function CartPage() {
             onClick={() => setActiveTab('cart')}
             className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
               activeTab === 'cart'
-                ? 'border-[#7d3d23] text-[#7d3d23]'
+                ? 'border-primary text-primary'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
             Shopping Cart
             {items.length > 0 && (
-              <span className="ml-2 bg-[#7d3d23] text-white text-sm rounded-full px-2 py-0.5">
+              <span className="ml-2 bg-primary text-primary-foreground text-sm rounded-full px-2 py-0.5">
                 {items.length}
               </span>
             )}
@@ -93,7 +93,7 @@ export default function CartPage() {
             onClick={() => setActiveTab('orders')}
             className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
               activeTab === 'orders'
-                ? 'border-[#7d3d23] text-[#7d3d23]'
+                ? 'border-primary text-primary'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -135,7 +135,7 @@ export default function CartPage() {
 
             <div className="flex justify-between items-center mb-6 pb-4 border-b">
               <span className="text-xl font-bold">Total:</span>
-              <span className="text-2xl font-bold text-[#7d3d23]">
+              <span className="text-2xl font-bold text-primary">
                 ${finalTotal.toFixed(2)}
               </span>
             </div>
@@ -151,8 +151,8 @@ export default function CartPage() {
               disabled={isLoading}
               className={`w-full text-white py-3 rounded-full font-semibold transition-all flex items-center justify-center gap-2 ${
                 isLoading
-                  ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                  : 'bg-[#7d3d23] hover:opacity-90'
+                  ? 'bg-black cursor-not-allowed opacity-70'
+                  : 'bg-black hover:opacity-90'
               }`}
             >
               {isLoading ? (
@@ -174,7 +174,7 @@ export default function CartPage() {
 
             <Link
               href="/products"
-              className="block text-center text-[#7d3d23] font-semibold hover:opacity-80 transition-opacity text-sm"
+              className="block text-center text-primary font-semibold hover:opacity-80 transition-opacity text-sm"
             >
               Continue Shopping
             </Link>

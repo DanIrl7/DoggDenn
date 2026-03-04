@@ -34,6 +34,7 @@ model User {
   name      String?
   role      Role     @default(CUSTOMER)
   orders    Order[]
+  cart      TempCart?
   createdAt DateTime @default(now())
 }
 
@@ -97,7 +98,8 @@ model OrderItem {
 // TEMPORARY CART
 model TempCart {
   id        String   @id @default(cuid())
-  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
   items     String   // JSON string of cart items
   expiresAt DateTime
   createdAt DateTime @default(now())

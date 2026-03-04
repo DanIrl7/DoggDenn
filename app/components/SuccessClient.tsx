@@ -108,7 +108,7 @@ export default function SuccessClient() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#FAF8F3] p-6 flex items-center justify-center">
+      <main className="min-h-screen bg-background p-6 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">Loading your order details...</p>
         </div>
@@ -118,14 +118,14 @@ export default function SuccessClient() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-[#FAF8F3] p-6">
+      <main className="min-h-screen bg-background p-6">
         <div className="max-w-2xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
             <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
             <p className="text-gray-600 mb-6">{error}</p>
             <Link
               href="/products"
-              className="inline-block bg-[#7d3d23] text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              className="inline-block bg-primary text-primary-foreground py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity"
             >
               Back to Shopping
             </Link>
@@ -137,7 +137,7 @@ export default function SuccessClient() {
 
   if (!order) {
     return (
-      <main className="min-h-screen bg-[#FAF8F3] p-6 flex items-center justify-center">
+      <main className="min-h-screen bg-background p-6 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">No order details found</p>
         </div>
@@ -146,7 +146,7 @@ export default function SuccessClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FAF8F3] p-6">
+    <main className="min-h-screen bg-background p-6">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg p-8">
           {/* Success Icon */}
@@ -159,19 +159,19 @@ export default function SuccessClient() {
           </div>
 
           {/* Header */}
-          <h1 className="text-4xl font-bold text-center text-[#7d3d23] mb-2">Payment Successful!</h1>
+          <h1 className="text-4xl font-bold text-center text-primary mb-2">Payment Successful!</h1>
           <p className="text-center text-gray-600 mb-8">Thank you for your order</p>
 
           {/* Order Summary */}
-          <div className="bg-[#FAF8F3] rounded-2xl p-6 mb-8">
+          <div className="bg-background rounded-2xl p-6 mb-8">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">Order ID:</span>
-                <span className="font-semibold text-[#7d3d23]">{order.sessionId.slice(0, 12)}...</span>
+                <span className="font-semibold text-primary">{order.sessionId.slice(0, 12)}...</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">Amount:</span>
-                <span className="font-semibold text-[#7d3d23]">${(order.amount / 100).toFixed(2)} {order.currency.toUpperCase()}</span>
+                <span className="font-semibold text-primary">${(order.amount / 100).toFixed(2)} {order.currency.toUpperCase()}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">Status:</span>
@@ -181,15 +181,15 @@ export default function SuccessClient() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">Date:</span>
-                <span className="font-semibold text-[#7d3d23]">{new Date(order.createdAt).toLocaleDateString()}</span>
+                <span className="font-semibold text-primary">{new Date(order.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
           </div>
 
           {/* Order Items */}
           {order.items && order.items.length > 0 && (
-            <div className="bg-[#FAF8F3] rounded-2xl p-6 mb-8">
-              <h2 className="text-xl font-semibold text-[#7d3d23] mb-4">Order Items</h2>
+            <div className="bg-background rounded-2xl p-6 mb-8">
+              <h2 className="text-xl font-semibold text-primary mb-4">Order Items</h2>
               <div className="space-y-3">
                 {order.items.map((item) => (
                   <div key={item.id} className="flex items-center justify-between py-2 border-b last:border-b-0">
@@ -214,13 +214,13 @@ export default function SuccessClient() {
           <div className="space-y-3">
             <Link
               href="/products"
-              className="block w-full bg-[#7d3d23] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-center"
+              className="block w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity text-center"
             >
               Continue Shopping
             </Link>
             <Link
               href="/"
-              className="block w-full border-2 border-[#7d3d23] text-[#7d3d23] py-3 rounded-lg font-semibold hover:bg-[#FAF8F3] transition-colors text-center"
+              className="block w-full border-2 border-primary text-primary py-3 rounded-lg font-semibold hover:bg-background transition-colors text-center"
             >
               Back to Home
             </Link>

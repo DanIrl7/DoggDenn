@@ -1,8 +1,10 @@
-'use client'; 
+'use client';
 
+import React from 'react';
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   SignInButton,
   SignUpButton,
@@ -13,15 +15,45 @@ import {
 import AdminOnly from './AdminOnly';
 import CartIcon from './CartIcon';
 
+type NavLinkProps = {
+  href: string;
+  pathname: string | null;
+  children: React.ReactNode;
+  onClick?: () => void;
+};
+
+function NavLink({ href, pathname, children, onClick }: NavLinkProps) {
+  const isActive = pathname === href;
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`flex flex-col items-center text-xl transition-colors duration-200 ${
+        isActive ? 'font-bold text-amber-600' : 'text-primary hover:text-amber-600'
+      }`}
+    >
+      {children}
+      <span
+        className={`text-lg leading-none transition-opacity duration-200 ${
+          isActive ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        🐾
+      </span>
+    </Link>
+  );
+}
+
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   return (
-    <header className="flex justify-between p-2 items-center bg-[#FAF8F3] shadow-md relative z-10">
+    <header className="flex relative justify-between p-2 items-center bg-[#FEF3C7]  shadow-lg z-10">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
         <Image
@@ -32,38 +64,25 @@ export default function Navbar() {
           quality={100}
           priority
         />
-        <span className="hidden sm:inline text-2xl font-bold text-[#7d3d23]">
+        <span className="hidden sm:inline text-2xl font-bold text-foreground">
           DoggDenn
         </span>
       </Link>
 
       {/* Desktop Navigation Links */}
-      <nav className="hidden md:flex gap-6">
-        <Link href="/" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200">
-          Home
-        </Link>
-        <Link href="/products" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200">
-          Products
-        </Link>
-        <Link href="/about" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200">
-          About
-        </Link>
-        <Link href="/contact" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200">
-          Contact
-        </Link>
+      <nav className="hidden md:flex gap-6 items-end">
+        <NavLink href="/" pathname={pathname}>Home</NavLink>
+        <NavLink href="/products" pathname={pathname}>Products</NavLink>
+        <NavLink href="/about" pathname={pathname}>About</NavLink>
+        <NavLink href="/contact" pathname={pathname}>Contact</NavLink>
         <AdminOnly>
-          <Link
-            href="/admin-dashboard"
-            className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200"
-          >
-            Admin Dashboard
-          </Link>
+          <NavLink href="/admin-dashboard" pathname={pathname}>Admin Dashboard</NavLink>
         </AdminOnly>
       </nav>
 
       {/* Mobile Menu Button (Hamburger) */}
       <div className="md:hidden flex items-center">
-        <button onClick={toggleMobileMenu} className="text-[#7d3d23] focus:outline-none hover:cursor-pointer">
+        <button onClick={toggleMobileMenu} className="text-foreground focus:outline-none hover:cursor-pointer">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             {isMobileMenuOpen ? (
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -80,7 +99,7 @@ export default function Navbar() {
         <SignedOut>
           <SignInButton />
           <SignUpButton>
-            <button className="bg-[#C09A7F] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:bg-[#B08874] transition-colors duration-200">
+            <button className="bg-secondary text-foreground rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:bg-secondary/80 transition-colors duration-200">
               Sign Up
             </button>
           </SignUpButton>
@@ -93,33 +112,19 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg flex flex-col items-center py-4 space-y-4">
-          <Link href="/" className="text-[#7d3d23] hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
-            Home
-          </Link>
-          <Link href="/products" className="text-[#7d3d23] text-xl hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
-            Products
-          </Link>
-          <Link href="/about" className="text-[#7d3d23] hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
-            About
-          </Link>
-          <Link href="/contact" className="text-[#7d3d23] hover:opacity-80 transition-opacity duration-200" onClick={toggleMobileMenu}>
-            Contact
-          </Link>
+          <NavLink href="/" pathname={pathname} onClick={toggleMobileMenu}>Home</NavLink>
+          <NavLink href="/products" pathname={pathname} onClick={toggleMobileMenu}>Products</NavLink>
+          <NavLink href="/about" pathname={pathname} onClick={toggleMobileMenu}>About</NavLink>
+          <NavLink href="/contact" pathname={pathname} onClick={toggleMobileMenu}>Contact</NavLink>
           <AdminOnly>
-            <Link
-              href="/admin-dashboard"
-              className="text-[#7d3d23] hover:opacity-80 transition-opacity duration-200"
-              onClick={toggleMobileMenu}
-            >
-              Admin Dashboard
-            </Link>
+            <NavLink href="/admin-dashboard" pathname={pathname} onClick={toggleMobileMenu}>Admin Dashboard</NavLink>
           </AdminOnly>
           <CartIcon />
           <div className="flex flex-col items-center gap-4 mt-4">
             <SignedOut>
               <SignInButton />
               <SignUpButton>
-                <button className="bg-[#7d3d23] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:opacity-90 transition-opacity duration-200">
+                <button className="bg-primary text-primary-foreground rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer hover:opacity-90 transition-opacity duration-200">
                   Sign Up
                 </button>
               </SignUpButton>

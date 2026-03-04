@@ -2,11 +2,258 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #FAF8F3;
-  --foreground: #2C2C2C;
-  --primary: #7d3d23;
-  --transparent-dark: #00000093;
+@theme { 
+    /* Warm, approachable dog-friendly palette */
+    --color-background: #FEF3C7; /* warm-50 - soft warm cream */
+    --color-foreground: #78350F; /* amber-900 - warm brown text */
+    --color-card: #FFFFFF; /* white - clean cards */
+    --color-card-foreground: #78350F; /* amber-900 - warm brown */
+    --color-popover: #FFFFFF; /* white */
+    --color-popover-foreground: #78350F; /* amber-900 */
+    --color-primary: #F59E0B; /* amber-500 - warm amber CTA */
+    --color-primary-foreground: #FFFFFF; /* white - high contrast */
+    --color-secondary: #FED7AA; /* orange-200 - soft peach accent */
+    --color-secondary-foreground: #78350F; /* amber-900 */
+    --color-muted: #FEF3C7; /* warm-50 - subtle backgrounds */
+    --color-muted-foreground: #92400E; /* amber-800 - muted text */
+    --color-accent: #22C55E; /* green-500 - fresh green secondary */
+    --color-accent-foreground: #FFFFFF; /* white */
+    --color-destructive: #EF4444; /* red-500 */
+    --color-destructive-foreground: #FFFFFF; /* white */
+    --color-border: #FED7AA; /* orange-200 - soft borders */
+    --color-input: #FED7AA; /* orange-200 */
+    --color-ring: #F59E0B; /* amber-500 */
+    --color-success: #22C55E; /* green-500 */
+    --color-success-foreground: #FFFFFF; /* white */
+    --color-warning: #F59E0B; /* amber-500 */
+    --color-warning-foreground: #FFFFFF; /* white */
+    --color-error: #EF4444; /* red-500 */
+    --color-error-foreground: #FFFFFF; /* white */
+
+    /* Border radius */
+    --radius-sm: 0.5rem; /* 8px */
+    --radius-md: 1rem; /* 16px */
+    --radius-lg: 1.5rem; /* 24px */
+    --radius-xl: 2rem; /* 32px */
+}
+
+/* @layer theme {
+
+} */
+
+@layer base {  
+  body {
+    background-color: #FEF3C7;
+    color: #78350F;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+}
+
+@layer components {
+  /* Paw print pattern background */
+  .paw-pattern {
+    background-image: radial-gradient(circle, #FED7AA 1.5px, transparent 1.5px);
+    background-size: 48px 48px;
+    background-position: 0 0, 24px 24px;
+    opacity: 0.08;
+  }
+
+  .background {
+    background-color: var(--color-background);
+  }
+
+  /* Floating animation for product cards */
+  .floating-card {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+
+  /* Hero line reveal animation */
+  .line-reveal {
+    display: block;
+    overflow: hidden;
+  }
+
+  .line-reveal span {
+    display: block;
+    transform: translateY(100%);
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .line-reveal.active span {
+    transform: translateY(0);
+  }
+
+  /* Hover lift effect with bounce */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-6px);
+  }
+
+  /* Tail wag animation for icons */
+  .tail-wag {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .tail-wag:hover {
+    animation: wag 0.6s ease-in-out 2;
+  }
+
+  @keyframes wag {
+    0%, 100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-8deg);
+    }
+    75% {
+      transform: rotate(8deg);
+    }
+  }
+
+  /* Fade in up animation */
+  .fade-in-up {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Scroll reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger delays for reveals */
+  .reveal-delay-100 {
+    transition-delay: 0.1s;
+  }
+
+  .reveal-delay-200 {
+    transition-delay: 0.2s;
+  }
+
+  .reveal-delay-300 {
+    transition-delay: 0.3s;
+  }
+
+  .reveal-delay-400 {
+    transition-delay: 0.4s;
+  }
+
+  /* Marquee scroll animation */
+  .scrolling-text-container {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .scrolling-text {
+    display: inline-block;
+    animation: scroll 50s linear infinite;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOutUp {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+  }
+
+  /* Warm gradient overlay for images */
+  .dog-image-overlay {
+    background: linear-gradient(180deg, transparent 0%, rgba(120, 53, 15, 0.25) 100%);
+  }
+
+  /* Glassmorphism for floating cards */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(254, 215, 170, 0.3);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #FEF3C7;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #FED7AA;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #F59E0B;
+  }
+
+  /* Selection color */
+  ::selection {
+    background: #F59E0B;
+    color: #FFFFFF;
+  }
+}
+
+@layer utilities {
+  /* Text balance for headings */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Remove spin buttons from number inputs */
@@ -18,35 +265,4 @@ input[type='number']::-webkit-inner-spin-button {
 
 input[type='number'] {
   -moz-appearance: textfield;
-}
-
-@keyframes slideIn {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(400%);
-  }
-}
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOutDown {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
 }

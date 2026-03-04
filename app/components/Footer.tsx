@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#7d3d23] text-white py-8 sm:py-12 px-4 sm:px-6 md:px-8">
+    <footer className="bg-primary text-primary-foreground py-8 sm:py-12 px-4 sm:px-6 md:px-8">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
 
         {/* Quick Links */}

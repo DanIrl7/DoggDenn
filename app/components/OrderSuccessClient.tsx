@@ -68,7 +68,7 @@ export default function OrderSuccessClient() {
           <p className="text-gray-600 mb-6">{error || 'Order not found'}</p>
           <Link
             href="/products"
-            className="inline-block bg-[#7d3d23] text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="inline-block bg-primary text-primary-foreground py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
             Back to Shopping
           </Link>
@@ -95,7 +95,7 @@ export default function OrderSuccessClient() {
           <p className="text-gray-700 mb-2">
             <span className="font-semibold">Order Number:</span>
           </p>
-          <p className="text-2xl font-bold text-[#7d3d23] mb-4">{order?.id?.slice(0, 8)}...</p>
+            <p className="text-2xl font-bold text-primary mb-4">{order?.id?.slice(0, 8)}...</p>
           <p className="text-gray-600 text-sm mb-4">
             Ordered on {new Date(order?.createdAt).toLocaleDateString()}
           </p>
@@ -121,7 +121,7 @@ export default function OrderSuccessClient() {
           <div className="mt-4 pt-4 border-t">
             <div className="flex justify-between items-center">
               <p className="text-lg font-bold text-gray-900">Total:</p>
-              <p className="text-2xl font-bold text-[#7d3d23]">${order?.total}</p>
+              <p className="text-2xl font-bold text-primary">${order?.total}</p>
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function OrderSuccessClient() {
         <div className="space-y-3">
           <Link
             href="/products"
-            className="block w-full bg-[#7d3d23] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              className="block w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
             Continue Shopping
           </Link>

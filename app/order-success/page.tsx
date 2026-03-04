@@ -3,7 +3,7 @@ import OrderSuccessClient from '@/app/components/OrderSuccessClient';
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <p className="text-gray-600">Loading order details...</p>
     </div>
   );

@@ -9,7 +9,7 @@ export default function CartIcon() {
   return (
     <Link href="/cart" className="relative flex items-center justify-center">
       <svg
-        className="w-6 h-6 text-[#7d3d23]"
+        className="w-6 h-6 text-primary"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
