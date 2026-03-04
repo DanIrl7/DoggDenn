@@ -17,7 +17,7 @@ export default function ApparelSection() {
       {/* Background Image - Absolute on desktop, relative on mobile */}
       <div
         ref={parallaxRef}
-        className="md:absolute inset-0 w-full h-auto md:h-full"
+        className="md:absolute inset-0  p-8 w-full h-auto md:h-full"
       >
         <Image
           src="/Frosty.jpg"
@@ -30,7 +30,7 @@ export default function ApparelSection() {
       </div>
 
       {/* Mobile Layout - Image on top */}
-      <div className="md:hidden w-full h-64 sm:h-80 relative flex-shrink-0">
+      <div className="md:hidden  p-8 w-full h-64 sm:h-80 relative flex-shrink-0">
         <Image
           src="/Frosty.jpg"
           alt="Happy dog playing in winter snow"
@@ -43,7 +43,7 @@ export default function ApparelSection() {
 
       {/* Text Content - Mobile: Black background below image, Desktop: Overlay */}
       <div
-        className={`relative md:absolute w-full md:w-auto md:max-w-3xl z-10 text-white text-left p-4 sm:p-6 md:p-8 md:rounded-lg transition-all duration-700 flex flex-col justify-center py-8 md:py-0 bg-black/90 md:bg-transparent ${
+        className={`relative md:absolute w-full md:w-auto md:max-w-3xl z-10 text-white text-left  sm:p-6 md:p-8 md:rounded-lg transition-all duration-700 flex flex-col justify-center p-12 bg-[#000000b6] ${
           isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
