@@ -81,7 +81,8 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile Menu Button (Hamburger) */}
-      <div className="md:hidden flex items-center">
+      <div className="md:hidden flex items-center gap-4">
+        <CartIcon />
         <button onClick={toggleMobileMenu} className="text-foreground focus:outline-none hover:cursor-pointer">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             {isMobileMenuOpen ? (

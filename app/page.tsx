@@ -56,7 +56,7 @@ const parallaxRef = useParallax(0.3)
           Your one-stop shop for premium pet products.
         </p>
         <Link href="/products" className="inline-block bg-amber-600 border-2 border-amber-600 hover:bg-transparent hover:border-amber-600 hover:text-amber-600 hover:border-2 text-primary-foreground font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-full text-sm sm:text-base duration-300 w-fit">
-          Shop Later
+          Shop Now
         </Link>
       </div>
 
