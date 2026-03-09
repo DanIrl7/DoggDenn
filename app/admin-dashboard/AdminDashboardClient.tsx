@@ -307,34 +307,40 @@ export function AdminDashboard() {
       <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
 
       {/* Tab Navigation */}
-      <div className="flex gap-4 mb-8 border-b">
+      <div className="flex gap-4 mb-8 border-b border-amber-200">
         <button
           onClick={() => setActiveTab('categories')}
-          className={`px-6 py-3 font-semibold transition-colors duration-200 ${
-            activeTab === 'categories'
-              ? 'text-(--primary) border-b-2 border-(--primary)'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
+          className={`relative px-6 py-3 font-semibold transition-colors duration-200
+            after:content-[''] after:absolute after:left-0 after:-bottom-px after:h-0.5 after:w-full after:bg-amber-600 after:origin-left after:transition-transform after:duration-300 after:ease-out
+            ${
+              activeTab === 'categories'
+                ? 'text-amber-600 after:scale-x-100'
+                : 'text-gray-500 hover:text-gray-900 after:scale-x-0'
+            }`}
         >
           Categories
         </button>
         <button
           onClick={() => setActiveTab('products')}
-          className={`px-6 py-3 font-semibold transition-colors duration-200 ${
-            activeTab === 'products'
-              ? 'text-(--primary) border-b-2 border-(--primary)'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
+          className={`relative px-6 py-3 font-semibold transition-colors duration-200
+            after:content-[''] after:absolute after:left-0 after:-bottom-px after:h-0.5 after:w-full after:bg-amber-600 after:origin-left after:transition-transform after:duration-300 after:ease-out
+            ${
+              activeTab === 'products'
+                ? 'text-amber-600 after:scale-x-100'
+                : 'text-gray-500 hover:text-gray-900 after:scale-x-0'
+            }`}
         >
           Products
         </button>
         <button
           onClick={() => setActiveTab('orders')}
-          className={`px-6 py-3 font-semibold transition-colors duration-200 ${
-            activeTab === 'orders'
-              ? 'text-(--primary) border-b-2 border-(--primary)'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
+          className={`relative px-6 py-3 font-semibold transition-colors duration-200
+            after:content-[''] after:absolute after:left-0 after:-bottom-px after:h-0.5 after:w-full after:bg-amber-600 after:origin-left after:transition-transform after:duration-300 after:ease-out
+            ${
+              activeTab === 'orders'
+                ? 'text-amber-600 after:scale-x-100'
+                : 'text-gray-500 hover:text-gray-900 after:scale-x-0'
+            }`}
         >
           Orders
         </button>

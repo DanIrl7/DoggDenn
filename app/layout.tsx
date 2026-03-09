@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
-import {
-  ClerkProvider
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageTransition from "./components/PageTransition";
 import { ToastProvider } from "./components/ToastProvider";
 import NavigationLoader from "./components/NavigationLoader";
+import CartHydrator from "./components/CartHydrator";
+import ParallaxProviderClient from "@/providers/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,21 +36,22 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ToastProvider>
-          <PageTransition />
-          <Suspense fallback={null}>
-            <NavigationLoader />
-          </Suspense>
-          <Navbar />
-          {children}
-          <Footer />
-        </ToastProvider>
-      </body>
-    </html>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <ParallaxProviderClient>
+            <ToastProvider>
+              <PageTransition />
+              <Suspense fallback={null}>
+                <NavigationLoader />
+              </Suspense>
+              <CartHydrator />
+              <Navbar />
+              {children}
+              <Footer />
+            </ToastProvider>
+          </ParallaxProviderClient>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }

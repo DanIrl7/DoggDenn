@@ -16,19 +16,14 @@ const config: Config = {
     },
     extend: {
       colors: {
+        'regalBlue': "var(--color-regal-blue)", // new regal blue color
         border: "var(--color-border)", // orange-200
         input: "var(--color-input)", // orange-200
         ring: "var(--color-ring)", // amber-500
         background: "var(--color-background)", // warm-50
         foreground: "var(--color-foreground)", // amber-900
-        primary: {
-          DEFAULT: "var(--color-primary)", // amber-500
-          foreground: "var(--color-primary-foreground)", // white
-        },
-        secondary: {
-          DEFAULT: "var(--color-secondary)", // orange-200
-          foreground: "var(--color-secondary-foreground)", // amber-900
-        },
+        'primary': "#F59E0B",
+        secondary: "var(--color-secondary)",
         destructive: {
           DEFAULT: "var(--color-destructive)", // red-500
           foreground: "var(--color-destructive-foreground)", // white

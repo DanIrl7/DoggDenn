@@ -12,10 +12,14 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  isHydrating: boolean;
+  hasHydrated: boolean;
   setItems: (items: CartItem[]) => void;
+  setIsHydrating: (isHydrating: boolean) => void;
+  setHasHydrated: (hasHydrated: boolean) => void;
   addItem: (product: Product, quantity: number) => void;
-  removeItem: (productId: string) => Promise<void>;
-  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  removeItem: (productId: string) => Promise<boolean>;
+  updateQuantity: (productId: string, quantity: number) => Promise<boolean>;
   clearCart: () => void;
   getTotal: () => number;
   getItemCount: () => number;
@@ -23,9 +27,19 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>((set, get) => ({
   items: [],
+  isHydrating: false,
+  hasHydrated: false,
 
   setItems: (items: CartItem[]) => {
     set({ items });
+  },
+
+  setIsHydrating: (isHydrating: boolean) => {
+    set({ isHydrating });
+  },
+
+  setHasHydrated: (hasHydrated: boolean) => {
+    set({ hasHydrated });
   },
 
   addItem: (product: Product, quantity: number) => {
@@ -48,7 +62,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
             name: product.name,
             price: product.price,
             quantity,
-            image: product.image ?? null,
+            image: product.image ?? product.images?.[0] ?? null,
             addedAt: new Date().toISOString(),
           },
         ],
@@ -69,15 +83,17 @@ export const useCartStore = create<CartStore>((set, get) => ({
       set((state) => ({
         items: state.items.filter(item => item.id !== productId),
       }));
+
+      return true;
     } catch (error) {
       console.error('Failed to remove item:', error);
+      return false;
     }
   },
 
   updateQuantity: async (productId: string, quantity: number) => {
     if (quantity <= 0) {
-      get().removeItem(productId);
-      return;
+      return await get().removeItem(productId);
     }
 
     try {
@@ -98,8 +114,11 @@ export const useCartStore = create<CartStore>((set, get) => ({
             : item
         ),
       }));
+
+      return true;
     } catch (error) {
       console.error('Failed to update quantity:', error);
+      return false;
     }
   },
 

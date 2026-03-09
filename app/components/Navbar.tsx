@@ -83,6 +83,14 @@ export default function Navbar() {
       {/* Mobile Menu Button (Hamburger) */}
       <div className="md:hidden flex items-center gap-4">
         <CartIcon />
+        <AdminOnly>
+          <Link
+            href="/admin-dashboard"
+            className="text-sm font-semibold text-primary hover:text-amber-600 transition-colors duration-200"
+          >
+            Admin
+          </Link>
+        </AdminOnly>
         <button onClick={toggleMobileMenu} className="text-foreground focus:outline-none hover:cursor-pointer">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             {isMobileMenuOpen ? (
@@ -120,7 +128,7 @@ export default function Navbar() {
           <AdminOnly>
             <NavLink href="/admin-dashboard" pathname={pathname} onClick={toggleMobileMenu}>Admin Dashboard</NavLink>
           </AdminOnly>
-          <CartIcon />
+          <CartIcon onClick={toggleMobileMenu} />
           <div className="flex flex-col items-center gap-4 mt-4">
             <SignedOut>
               <SignInButton />

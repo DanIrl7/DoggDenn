@@ -3,11 +3,19 @@
 import Link from 'next/link';
 import { useCartStore } from '@/app/store/cartStore';
 
-export default function CartIcon() {
+type CartIconProps = {
+  onClick?: () => void;
+};
+
+export default function CartIcon({ onClick }: CartIconProps) {
   const itemCount = useCartStore((state) => state.getItemCount());
 
   return (
-    <Link href="/cart" className="relative flex items-center justify-center">
+    <Link
+      href="/cart"
+      onClick={onClick}
+      className="relative flex items-center justify-center"
+    >
       <svg
         className="w-6 h-6 text-primary"
         fill="none"

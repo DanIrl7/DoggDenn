@@ -12,9 +12,11 @@ export function useParallax(speed = 0.2, smoothing = 0.1) {
     const parent = element.parentElement;
     if (!parent) return;
 
-    // Detect if mobile and increase parallax speed on mobile for visibility
+    // Detect if mobile and adjust parallax for visibility without shifting too far.
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const effectiveSpeed = isMobile ? speed * 3 : speed;
+    const effectiveSpeed = isMobile ? speed * 1.5 : speed;
+    const maxTranslate = isMobile ? 40 : Number.POSITIVE_INFINITY;
+    const scale = isMobile ? 1.2 : 1.1;
 
     // Calculate the section's natural center from page top once on mount,
     // before any transforms are applied. This avoids a feedback loop where
@@ -34,7 +36,8 @@ export function useParallax(speed = 0.2, smoothing = 0.1) {
     let rafId: number;
     const animate = () => {
       current.current += (target.current - current.current) * smoothing;
-      element.style.transform = `translateY(${current.current}px) scale(1.1)`;
+      const translateY = Math.max(-maxTranslate, Math.min(maxTranslate, current.current));
+      element.style.transform = `translateY(${translateY}px) scale(${scale})`;
       rafId = requestAnimationFrame(animate);
     };
 

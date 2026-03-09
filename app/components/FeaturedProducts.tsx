@@ -75,6 +75,7 @@ export default function FeaturedProducts() {
             name: selectedProduct.name,
             price: selectedProduct.price,
             quantity,
+            image: selectedProduct.image || selectedProduct.images?.[0] || null,
           }),
         });
 
@@ -133,7 +134,7 @@ export default function FeaturedProducts() {
                       className="relative flex-none w-full md:w-1/2 lg:w-1/3 pl-4 cursor-pointer"
                       onClick={() => setSelectedProduct(product)}
                     >
-                      <div className="group rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-900 bg-white">
+                      <div className="group rounded-3xl md:w-[70%] text-center overflow-hidden hover:shadow-2xl transition-all duration-900 bg-white">
                         {/* Product Image */}
                         <div className="relative w-full pb-[100%] bg-gray-100 overflow-hidden">
                           <Image

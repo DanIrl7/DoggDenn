@@ -1,8 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import { CartItem } from '@/app/store/cartStore';
 import { useCartStore } from '@/app/store/cartStore';
+import { useToast } from '@/app/components/ToastProvider';
 
 interface CartItemProps {
   item: CartItem;
@@ -10,6 +12,8 @@ interface CartItemProps {
 
 export default function CartItemComponent({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCartStore();
+  const { showToast } = useToast();
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const quantity = parseInt(e.target.value, 10);
@@ -18,8 +22,22 @@ export default function CartItemComponent({ item }: CartItemProps) {
     }
   };
 
+  const handleRemove = async () => {
+    if (isRemoving) return;
+    setIsRemoving(true);
+
+    const ok = await removeItem(item.id);
+    if (ok) {
+      showToast('Item removed from cart', 'success');
+    } else {
+      showToast('Failed to remove item', 'error');
+    }
+
+    setIsRemoving(false);
+  };
+
   return (
-    <div className="flex gap-4 border-b pb-4">
+    <div className={`flex gap-4 border-b pb-4 ${isRemoving ? 'opacity-60' : ''}`}>
       {/* Product Image */}
       <div className="relative w-24 h-24 flex-shrink-0">
         <Image
@@ -54,10 +72,18 @@ export default function CartItemComponent({ item }: CartItemProps) {
           ${(item.price * item.quantity).toFixed(2)}
         </p>
         <button
-          onClick={() => removeItem(item.id)}
-          className="text-red-500 hover:text-red-700 text-sm font-medium"
+          onClick={handleRemove}
+          disabled={isRemoving}
+          className={`text-sm font-medium flex items-center gap-2 ${
+            isRemoving
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'text-red-500 hover:text-red-700'
+          }`}
         >
-          Remove
+          {isRemoving && (
+            <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          )}
+          {isRemoving ? 'Removing…' : 'Remove'}
         </button>
       </div>
     </div>

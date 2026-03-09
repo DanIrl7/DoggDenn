@@ -15,14 +15,19 @@ export default function AdminOnly({ children }: { children: ReactNode }) {
         return;
       }
 
+      const clerkRole = user.publicMetadata?.role;
+      if (typeof clerkRole === 'string' && clerkRole.toLowerCase() === 'admin') {
+        setIsAdmin(true);
+        setIsChecking(false);
+        return;
+      }
+
       try {
         const res = await fetch('/api/user/role');
         if (res.ok) {
           const data = await res.json();
-          console.log('AdminOnly component: User role is', data.role);
-          setIsAdmin(data.role === 'ADMIN');
+          setIsAdmin(String(data.role).toUpperCase() === 'ADMIN');
         } else {
-          console.log('AdminOnly: Failed to fetch role:', res.status);
           setIsAdmin(false);
         }
       } catch (error) {

@@ -5,14 +5,41 @@ import { useState } from 'react';
 import { useCartStore } from '@/app/store/cartStore';
 import CartItemComponent from '@/app/components/CartItemComponent';
 import OrderHistory from '@/app/components/OrderHistory';
+import { useToast } from '@/app/components/ToastProvider';
 
 export default function CartPage() {
-  const { items, clearCart, getTotal } = useCartStore();
+  const { items, clearCart, getTotal, isHydrating, hasHydrated } = useCartStore();
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isClearingCart, setIsClearingCart] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'cart' | 'orders'>('cart');
   const total = getTotal();
   const finalTotal = total * 1.1; // with tax
+
+  const handleClearCart = async () => {
+    if (isClearingCart) return;
+
+    setIsClearingCart(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/cart', { method: 'DELETE' });
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error((data as { message?: string } | null)?.message || 'Failed to clear cart');
+      }
+
+      clearCart();
+      showToast('Cart cleared', 'success');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to clear cart';
+      setError(message);
+      showToast(message, 'error');
+    } finally {
+      setIsClearingCart(false);
+    }
+  };
 
   const handleCheckout = async () => {
     setIsLoading(true);
@@ -51,6 +78,18 @@ export default function CartPage() {
   };
 
   if (items.length === 0 && activeTab === 'cart') {
+    if (!hasHydrated || isHydrating) {
+      return (
+        <main className="min-h-screen p-6 max-w-6xl mx-auto bg-background">
+          <h1 className="text-4xl font-bold mb-8">Shopping Cart</h1>
+          <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+            <div className="mx-auto mb-4 w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <p className="text-xl text-gray-600">Loading your cart…</p>
+          </div>
+        </main>
+      );
+    }
+
     return (
       <main className="min-h-screen p-6 max-w-6xl mx-auto bg-background">
         <h1 className="text-4xl font-bold mb-8">Shopping Cart</h1>
@@ -70,37 +109,60 @@ export default function CartPage() {
   return (
     <main className="min-h-screen p-6 max-w-6xl mx-auto bg-background">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-6">Account</h1>
+        <h1 className="text-4xl text-amber-600 font-bold mb-6">Account</h1>
 
         {/* Tab Navigation */}
-        <div className="flex gap-4 border-b border-gray-200">
+        <div className="flex gap-4 border-b border-amber-200">
           <button
             onClick={() => setActiveTab('cart')}
-            className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-              activeTab === 'cart'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-            }`}
+            className={`relative px-6 py-3 font-semibold transition-colors duration-700
+              after:content-[''] after:absolute after:left-0 after:-bottom-px after:h-0.5 after:w-full after:bg-amber-600 after:origin-left after:transition-transform after:duration-700 after:ease-out
+              ${
+                activeTab === 'cart'
+                  ? 'text-amber-600 after:scale-x-100'
+                  : 'text-gray-500 hover:text-gray-900 after:scale-x-0'
+              }`}
           >
             Shopping Cart
             {items.length > 0 && (
-              <span className="ml-2 bg-primary text-primary-foreground text-sm rounded-full px-2 py-0.5">
+              <span className="ml-2 bg-amber-600 text-white text-sm rounded-full px-2 py-0.5">
                 {items.length}
               </span>
             )}
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-              activeTab === 'orders'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-            }`}
+            className={`relative px-6 py-3 font-semibold transition-colors duration-200
+              after:content-[''] after:absolute after:left-0 after:-bottom-px after:h-0.5 after:w-full after:bg-amber-600 after:origin-left after:transition-transform after:duration-300 after:ease-out
+              ${
+                activeTab === 'orders'
+                  ? 'text-amber-600 after:scale-x-100'
+                  : 'text-gray-500 hover:text-gray-900 after:scale-x-0'
+              }`}
           >
             Order History
           </button>
         </div>
       </div>
+
+      {activeTab === 'cart' && items.length > 0 && (
+        <div className="mb-4 flex justify-end">
+          <button
+            onClick={handleClearCart}
+            disabled={isClearingCart}
+            className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center justify-center gap-2 ${
+              isClearingCart
+                ? 'bg-black opacity-70 text-white cursor-not-allowed'
+                : 'bg-black text-white hover:opacity-90'
+            }`}
+          >
+            {isClearingCart && (
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            )}
+            {isClearingCart ? 'Clearing…' : 'Clear Cart'}
+          </button>
+        </div>
+      )}
 
       {/* Cart Tab Content */}
       {activeTab === 'cart' && (
@@ -166,10 +228,18 @@ export default function CartPage() {
             </button>
 
             <button
-              onClick={() => clearCart()}
-              className="w-full border border-gray-300 text-gray-700 py-2 rounded-full font-semibold hover:bg-gray-50 transition-colors mb-3"
+              onClick={handleClearCart}
+              disabled={isClearingCart}
+              className={`w-full border py-2 rounded-full font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${
+                isClearingCart
+                  ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
             >
-              Clear Cart
+              {isClearingCart && (
+                <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              )}
+              {isClearingCart ? 'Clearing…' : 'Clear Cart'}
             </button>
 
             <Link

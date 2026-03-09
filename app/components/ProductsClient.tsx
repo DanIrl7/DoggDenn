@@ -143,6 +143,7 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
             name: selectedProduct.name,
             price: selectedProduct.price,
             quantity,
+            image: selectedProduct.image || selectedProduct.images?.[0] || null,
           }),
         });
 
@@ -187,6 +188,7 @@ export default function ProductsClient({ initialCategories, initialProducts }: P
           name: product.name,
           price: product.price,
           quantity: qty,
+          image: product.image || product.images?.[0] || null,
         }),
       });
 

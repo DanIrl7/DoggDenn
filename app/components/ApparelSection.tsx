@@ -3,47 +3,48 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useInView } from '@/app/hooks/useInView';
-import { useParallax } from '@/app/hooks/useParallax';
+import { useParallax } from 'react-scroll-parallax';
 
 export default function ApparelSection() {
   const { ref, isInView } = useInView<HTMLElement>();
-  const parallaxRef = useParallax(0.3);
+  const { ref: desktopBgRef } = useParallax<HTMLDivElement>({ speed: -18 });
+  const { ref: mobileBgRef } = useParallax<HTMLDivElement>({ speed: -10 });
 
   return (
     <section
       ref={ref}
-      className="w-full relative md:min-h-screen flex md:items-center md:justify-center md:p-4 sm:md:p-6 md:md:p-8 overflow-hidden flex-col md:flex-row"
+      className="w-full relative md:min-h-screen flex md:items-center md:justify-center md:p-4 overflow-hidden flex-col md:flex-row"
     >
-      {/* Background Image - Absolute on desktop, relative on mobile */}
-      <div
-        ref={parallaxRef}
-        className="md:absolute inset-0  p-8 w-full h-auto md:h-full"
-      >
-        <Image
-          src="/Frosty.jpg"
-          alt="Happy dog playing in winter snow"
-          fill
-          quality={100}
-          sizes="100vw"
-          className="object-cover"
-        />
-      </div>
+      {/* Background Image (mobile: takes space; desktop: absolute overlay) */}
+      <div className="relative w-full h-64 sm:h-80 md:absolute md:inset-0 md:h-full overflow-hidden">
+        <div ref={mobileBgRef} className="absolute inset-0 will-change-transform md:hidden">
+          <div className="absolute scale-105 -inset-10">
+          <Image
+            src="/Frosty.jpg"
+            alt="Happy dog playing in winter snow"
+            fill
+            quality={100}
+            sizes="100vw"
+            className="object-cover"
+          />
+          </div>
+        </div>
 
-      {/* Mobile Layout - Image on top */}
-      <div className="md:hidden  p-8 w-full h-64 sm:h-80 relative flex-shrink-0">
-        <Image
-          src="/Frosty.jpg"
-          alt="Happy dog playing in winter snow"
-          fill
-          quality={100}
-          sizes="100vw"
-          className="object-cover"
-        />
+        <div ref={desktopBgRef} className="absolute inset-0 will-change-transform hidden md:block">
+          <Image
+            src="/Frosty.jpg"
+            alt="Happy dog playing in winter snow"
+            fill
+            quality={100}
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
       </div>
 
       {/* Text Content - Mobile: Black background below image, Desktop: Overlay */}
       <div
-        className={`relative md:absolute w-full md:w-auto md:max-w-3xl z-10 text-white text-left  sm:p-6 md:p-8 md:rounded-lg transition-all duration-700 flex flex-col justify-center p-12 bg-[#000000b6] ${
+        className={`relative md:absolute w-full md:w-auto md:max-w-3xl z-10 text-white text-left sm:p-6 md:p-8 md:rounded-lg transition-all duration-700 flex flex-col justify-center p-12 bg-[#000000b6] ${
           isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
