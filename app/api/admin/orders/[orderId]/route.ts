@@ -1,26 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check if user is admin
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    if (!user || user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
+    await requireAdmin();
 
     const { orderId } = await params;
     const { status } = await request.json();
@@ -60,6 +47,9 @@ export async function PUT(
 
     return NextResponse.json(updatedOrder, { status: 200 });
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     console.error('Error updating order:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

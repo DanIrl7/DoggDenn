@@ -11,6 +11,7 @@ export default function AdminOnly({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAdminRole = async () => {
       if (!isLoaded || !user) {
+        setIsAdmin(false);
         setIsChecking(false);
         return;
       }

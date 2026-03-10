@@ -110,7 +110,7 @@ export default function FeaturedProducts() {
           {loading ? (
             <div className="flex -ml-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="relative flex-none w-full md:w-1/2 lg:w-1/3 pl-4">
+                <div key={i} className="relative flex-none w-[70%] md:w-1/2 lg:w-1/3 pl-4">
                   <div className="rounded-3xl overflow-hidden bg-white">
                     <div className="relative w-full pb-[100%] bg-gray-200 rounded-3xl animate-pulse" />
                     <div className="p-4 bg-white">
@@ -131,7 +131,7 @@ export default function FeaturedProducts() {
                   return (
                     <div
                       key={product.id}
-                      className="relative flex-none w-full md:w-1/2 lg:w-1/3 pl-4 cursor-pointer"
+                      className="relative flex-none w-[70%] md:w-1/2 lg:w-1/3 pl-4 cursor-pointer"
                       onClick={() => setSelectedProduct(product)}
                     >
                       <div className="group rounded-3xl md:w-[70%] text-center overflow-hidden hover:shadow-2xl transition-all duration-900 bg-white">

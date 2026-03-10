@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET endpoint to fetch all categories
@@ -25,14 +25,7 @@ export async function GET() {
 // POST endpoint to create a new category
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    await requireAdmin();
 
     const body = await request.json();
     const { name, description, image } = body;
@@ -56,6 +49,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(category, { status: 201 });
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     console.error("Create category error:", error);
     return NextResponse.json(
       {

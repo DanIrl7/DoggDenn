@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server';
+import { requireAdmin } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
@@ -45,14 +45,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Check authentication
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    await requireAdmin();
 
     // Await params
     const { id } = await params;
@@ -87,6 +80,9 @@ export async function PUT(
 
     return NextResponse.json(productWithNumber);
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     console.error('Update product error:', error);
     return NextResponse.json(
       { error: 'Failed to update product', details: error instanceof Error ? error.message : 'Unknown error' },
@@ -100,14 +96,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Check authentication
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    await requireAdmin();
 
     // Await params
     const { id } = await params;
@@ -119,6 +108,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     console.error('Delete product error:', error);
     return NextResponse.json(
       { error: 'Failed to delete product', details: error instanceof Error ? error.message : 'Unknown error' },

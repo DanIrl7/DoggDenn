@@ -7,41 +7,66 @@ import TestimonialsSection from './components/TestimonialsSection';
 import FeaturesSection from './components/FeaturesSection';
 import FeaturedProducts from './components/FeaturedProducts';
 import ApparelSection from './components/ApparelSection';
-import { useParallax } from 'react-scroll-parallax';
+import { Parallax } from 'react-scroll-parallax';
+
+const shimmer = (w: number, h: number) => `
+<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="g">
+      <stop stop-color="#FED7AA" offset="20%" />
+      <stop stop-color="#FEF3C7" offset="50%" />
+      <stop stop-color="#FED7AA" offset="70%" />
+    </linearGradient>
+  </defs>
+  <rect width="${w}" height="${h}" fill="#FED7AA"/>
+  <rect id="r" width="${w}" height="${h}" fill="url(#g)"/>
+  <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1.2s" repeatCount="indefinite"  />
+</svg>`;
+
+const toBase64 = (str: string) =>
+  typeof window === 'undefined'
+    ? Buffer.from(str).toString('base64')
+    : window.btoa(str);
+
+const heroBlurDataURL = `data:image/svg+xml;base64,${toBase64(shimmer(800, 600))}`;
 
 export default function Home() {
-  const { ref: desktopBgRef } = useParallax<HTMLDivElement>({ speed: -20 });
-  const { ref: mobileBgRef } = useParallax<HTMLDivElement>({ speed: -12 });
+  // const { ref: desktopBgRef } = useParallax<HTMLDivElement>({ speed: -20 });
+  // const { ref: mobileBgRef } = useParallax<HTMLDivElement>({ speed: -12 });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between bg-background">
       {/* HERO SECTION */}
-      <section className="relative w-full md:min-h-screen md:h-full flex md:items-center md:justify-start text-center overflow-hidden flex-col md:flex-row">
+      <section className="relative w-full md:h-screen flex md:items-center md:justify-start text-center overflow-hidden flex-col md:flex-row">
         {/* Background Image (mobile: takes space; desktop: absolute overlay) */}
-        <div className="relative w-full h-64 sm:h-80 md:absolute md:inset-0 md:h-full overflow-hidden">
-          <div ref={mobileBgRef} className="absolute inset-0 will-change-transform md:hidden">
-            <div className="absolute scale-105 -inset-10">
+        <div className="relative w-full h-64 sm:h-96 md:absolute md:inset-0 md:h-full overflow-hidden bg-[#FED7AA]">
+          <Parallax speed={-15} className="absolute inset-0 will-change-transform md:hidden">
+            <div className="absolute -inset-12 scale-110">
             <Image
               src="/hero1/hero1.webp"
               alt="Doggdenn hero Image"
               fill
               priority
               sizes="100vw"
+              placeholder="blur"
+              blurDataURL={heroBlurDataURL}
               className="object-cover"
             />
             </div>
-          </div>
+           </Parallax>
 
-          <div ref={desktopBgRef} className="absolute inset-0 will-change-transform hidden md:block">
+          <Parallax className="absolute inset-0 will-change-transform hidden md:block">
             <Image
               src="/hero1/hero1.webp"
               alt="Doggdenn hero Image"
               fill
               priority
               sizes="100vw"
+              placeholder="blur"
+              blurDataURL={heroBlurDataURL}
               className="object-cover"
             />
-          </div>
+          </Parallax>
         </div>
 
         {/* Text Section - Mobile: Black background below image, Desktop: Overlay */}

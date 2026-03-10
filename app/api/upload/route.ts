@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
+import { requireAdmin } from '@/lib/auth';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -10,6 +11,8 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAdmin();
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -60,6 +63,9 @@ export async function POST(request: NextRequest) {
       publicId: result.public_id,
     });
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Unauthorized')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     console.error('Upload error:', error);
     
     // Handle specific timeout errors

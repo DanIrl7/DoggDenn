@@ -64,31 +64,7 @@ export async function POST(request: NextRequest) {
     }));
 
 
-//     // CREATE CART ITEMS FOR STORAGE
-//     const cartItems = items.map((item: CartItem) =>  ({
-//       id: item.id,
-//       name: item.name,
-//       quantity: item.quantity,
-//       price: item.price,
-//     }))
 
-//     const cartItemsJson = JSON.stringify(cartItems)
-
-//     const metadata: Record<string, string> = { userId }
-
-// if (cartItemsJson.length <= MAX_METADATA_LENGTH) {
-//       // If small enough, store directly in metadata
-//       metadata.cartItems = cartItemsJson;
-//     } else {
-//       const TempCart = await prisma.tempCart.create({
-//         data: {
-//           userId,
-//           items: cartItemsJson,
-//           expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-//         }
-//       });
-//       metadata.tempCartId = TempCart.id;
-//     }
 
     // Create a Checkout Session
     const session = await stripe.checkout.sessions.create({

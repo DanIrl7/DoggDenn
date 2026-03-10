@@ -18,7 +18,7 @@ export default function ApparelSection() {
       {/* Background Image (mobile: takes space; desktop: absolute overlay) */}
       <div className="relative w-full h-64 sm:h-80 md:absolute md:inset-0 md:h-full overflow-hidden">
         <div ref={mobileBgRef} className="absolute inset-0 will-change-transform md:hidden">
-          <div className="absolute scale-105 -inset-10">
+          <div className="absolute scale-110 -inset-10">
           <Image
             src="/Frosty.jpg"
             alt="Happy dog playing in winter snow"

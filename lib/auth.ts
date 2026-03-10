@@ -1,14 +1,17 @@
-import { currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
+import prisma from '@/lib/prisma';
 
 export async function isAdmin(): Promise<boolean> {
-  const user = await currentUser();
-  
-  if (!user) {
-    return false;
-  }
+  const { userId } = await auth();
 
-  const role = user.publicMetadata?.role as string | undefined;
-  return role === 'admin';
+  if (!userId) return false;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+
+  return user?.role === 'ADMIN';
 }
 
 export async function requireAdmin() {

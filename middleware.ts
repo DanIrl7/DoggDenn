@@ -23,21 +23,24 @@ const isAdminRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
 
-  // Debug logging
-  console.log('=== MIDDLEWARE DEBUG ===');
-  console.log('Path:', req.nextUrl.pathname);
-  console.log('User ID:', userId);
-  console.log('=== END DEBUG ===');
+  const debug = process.env.NODE_ENV !== 'production' && process.env.DEBUG_MIDDLEWARE === 'true';
+
+  if (debug) {
+    console.log('=== MIDDLEWARE DEBUG ===');
+    console.log('Path:', req.nextUrl.pathname);
+    console.log('User ID:', userId);
+    console.log('=== END DEBUG ===');
+  }
 
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
 
   if (isAdminRoute(req)) {
-    console.log('Checking admin route access...');
+    if (debug) console.log('Checking admin route access...');
     
     if (!userId) {
-      console.log('No userId found - redirecting to sign-in');
+      if (debug) console.log('No userId found - redirecting to sign-in');
       const signInUrl = new URL('/sign-in', req.url);
       signInUrl.searchParams.set('redirect_url', req.url);
       return NextResponse.redirect(signInUrl);
@@ -45,7 +48,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     // For now, allow all authenticated users to access admin routes
     // The role check will happen in API routes via requireAdmin()
-    console.log('User authenticated - allowing access to admin route');
+    if (debug) console.log('User authenticated - allowing access to admin route');
   }
 
   return NextResponse.next();

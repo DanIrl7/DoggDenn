@@ -39,20 +39,8 @@ export async function POST(request: NextRequest) {
 
     const { sessionId, items, total }: SaveOrderRequest = await request.json();
 
-    // Log the incoming data for debugging
-    console.log('DEBUG: /api/orders/save POST request received');
-    console.log('DEBUG: sessionId:', sessionId);
-    console.log('DEBUG: items:', JSON.stringify(items, null, 2));
-    console.log('DEBUG: total:', total);
-    console.log('DEBUG: userId:', userId);
-
     // Validate inputs
     if (!sessionId || !items || items.length === 0 || !total) {
-      console.log('DEBUG: Validation failed');
-      console.log('  sessionId:', !!sessionId);
-      console.log('  items exists:', !!items);
-      console.log('  items length:', items?.length);
-      console.log('  total:', total);
       return NextResponse.json(
         { error: 'Missing required fields: sessionId, items, total' },
         { status: 400 }
