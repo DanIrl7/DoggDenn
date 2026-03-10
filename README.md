@@ -9,7 +9,6 @@ E-commerce website for dogs built with Next.js (App Router), Clerk auth, Prisma/
 - Clerk authentication
 - Prisma + PostgreSQL (`pg` + `@prisma/adapter-pg`)
 - Stripe checkout + webhooks
-- Resend (transactional email)
 - Cloudinary (image uploads)
 - SWR (client-side data fetching) + Zustand (cart state)
 
@@ -66,10 +65,6 @@ Clerk also requires its standard Next.js env vars (see Clerk docs), typically:
 - `CLERK_WEBHOOK_SECRET_DEV` — Clerk webhook secret for local/ngrok
 - `CLERK_WEBHOOK_SECRET_PROD` — Clerk webhook secret for production
 
-### Email (Resend)
-
-- `RESEND_API_KEY` — Resend API key
-- `EMAIL_FROM` — optional sender address (defaults to `orders@yourdomain.com`)
 
 ### Cloudinary
 

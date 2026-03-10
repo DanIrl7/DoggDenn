@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   title: "DoggDenn",
   description: "All your doggy needs in one shop",
   icons: {
-    icon:"/logo.png"
+    icon:"/doghouselogo.png"
   },
 };
 
