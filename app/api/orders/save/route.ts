@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, clerkClient } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
+import prisma from '@/lib/prisma';
+import { createOrderFromStripeSession, sendOrderConfirmationEmail } from '@/lib/orders';
 
 const getStripe = () => {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -14,22 +15,13 @@ const getStripe = () => {
 
 interface SaveOrderRequest {
   sessionId: string;
-  items: Array<{
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image?: string;
-  }>;
-  total: number;
 }
 
 export async function POST(request: NextRequest) {
   const stripe = getStripe();
   try {
-    // Check if user is authenticated
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized - user not authenticated' },
@@ -37,42 +29,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { sessionId, items, total }: SaveOrderRequest = await request.json();
+    // Only the session ID is trusted from the client — everything else
+    // (items, prices, total) is re-derived from Stripe's own session data
+    // below, since a client-supplied price/total can be tampered with.
+    const { sessionId }: SaveOrderRequest = await request.json();
 
-    // Validate inputs
-    if (!sessionId || !items || items.length === 0 || !total) {
+    if (!sessionId) {
       return NextResponse.json(
-        { error: 'Missing required fields: sessionId, items, total' },
+        { error: 'Missing required field: sessionId' },
         { status: 400 }
       );
     }
 
-    // Check if order already exists (prevent duplicates)
-    const existingOrder = await prisma.order.findUnique({
-      where: { stripeSessionId: sessionId },
-    });
-
-    if (existingOrder) {
-      return NextResponse.json(
-        { orderId: existingOrder.id, message: 'Order already saved' },
-        { status: 200 }
-      );
-    }
-
-    // Verify the session with Stripe
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Invalid Stripe session' },
-        { status: 400 }
-      );
-    }
-
-  const customerDetails = session.customer_details;
-
-    // Ensure user exists in database (sync from Clerk)
-    // Fetch user from Clerk to get their email
+    // Ensure user exists in database (sync from Clerk) before creating the
+    // order, since createOrderFromStripeSession requires it to already exist.
     const client = await clerkClient();
     const clerkUser = await client.users.getUser(userId);
     const userEmail = clerkUser.emailAddresses[0]?.emailAddress || `${userId}@clerk.local`;
@@ -88,45 +58,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const { order, created } = await createOrderFromStripeSession(stripe, sessionId);
 
-
-    // Create order in database with transaction
-    const order = await prisma.order.create({
-      data: {
-        userId,
-        stripeSessionId: sessionId,
-        total: total.toString(),
-          shippingName: customerDetails?.name || '',
-          shippingEmail: customerDetails?.email || '',
-          shippingAddress: customerDetails?.address?.line1 || '',
-          shippingCity: customerDetails?.address?.city || '',
-          shippingState: customerDetails?.address?.state || '',
-          shippingPostalCode: customerDetails?.address?.postal_code || '',
-          shippingCountry: customerDetails?.address?.country || '',
-        items: {
-          create: items.map((item) => ({
-            productId: item.id,
-            name: item.name,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-        },
-      },
-      include: {
-        items: {
-          include: {
-            product: true,
-          },
-        },
-      },
-    });
+    if (created) {
+      await sendOrderConfirmationEmail(order);
+    }
 
     return NextResponse.json(
-      { 
+      {
         orderId: order.id,
-        message: 'Order saved successfully'
+        message: created ? 'Order saved successfully' : 'Order already saved',
       },
-      { status: 201 }
+      { status: created ? 201 : 200 }
     );
   } catch (error) {
     console.error('Error saving order:', error);

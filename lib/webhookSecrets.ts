@@ -10,12 +10,16 @@ export const isLocalEnvironment = (req: NextRequest): boolean => {
 };
 
 /**
- * Determines if the request is from production environment (Vercel)
+ * Determines if the request is from production environment (Vercel).
+ *
+ * There are only two secret slots (DEV/PROD), so "production" just means
+ * "not local" — this used to hardcode the deployed domain name instead,
+ * which silently broke every webhook the moment the real domain
+ * (doggdenn.vercel.app) didn't match what was hardcoded here
+ * (dogg-denn.vercel.app, with a hyphen that was never actually deployed).
  */
 export const isProductionEnvironment = (req: NextRequest): boolean => {
-  const host = req.headers.get('host') || '';
-  
-  return host.includes('dogg-denn.vercel.app');
+  return !isLocalEnvironment(req);
 };
 
 /**
