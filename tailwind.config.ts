@@ -22,7 +22,10 @@ const config: Config = {
         ring: "var(--color-ring)", // amber-500
         background: "var(--color-background)", // warm-50
         foreground: "var(--color-foreground)", // amber-900
-        'primary': "#F59E0B",
+        primary: {
+          DEFAULT: "var(--color-primary)", // amber-500
+          foreground: "var(--color-primary-foreground)", // white
+        },
         secondary: "var(--color-secondary)",
         destructive: {
           DEFAULT: "var(--color-destructive)", // red-500

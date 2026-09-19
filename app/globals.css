@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@theme { 
+:root {
     /* Warm, approachable dog-friendly palette */
     --color-regal-blue: #243c5a; 
     --color-background: #FEF3C7; /* warm-50 - soft warm cream */
